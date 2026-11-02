@@ -1,0 +1,31 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Profilo from "../components/Profilo.astro";
+import CardProgetto from "../components/CardProgetto.astro";
+import Etichetta from "../components/Etichetta.astro";
+
+const progetti = (await getCollection("progetti")).sort((a, b) => a.data.ordine - b.data.ordine);
+const [primo, ...altri] = progetti;
+---
+
+<Layout title="Paolo Laddomada · Portfolio" description="Portfolio di Paolo Laddomada, Front End Developer.">
+  <div class="mx-auto flex max-w-[calc(var(--content-max)_+_2*var(--page-x))] flex-col gap-(--page-gap) px-(--page-x) pt-(--page-top)">
+    <header class="flex h-16 items-center">
+      <Etichetta />
+    </header>
+
+    <main class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-12">
+      <div data-reveal class="grid lg:col-span-4"><Profilo /></div>
+      {primo && <div data-reveal class="grid sm:row-span-2 lg:col-span-8 lg:row-span-2"><CardProgetto progetto={primo} grande /></div>}
+      {altri.map((p) => <div data-reveal class="grid lg:col-span-4"><CardProgetto progetto={p} /></div>)}
+    </main>
+
+  </div>
+</Layout>
+
+<script>
+  // Il ritorno dal dettaglio arriva su /#slug: il focus va alla card di provenienza.
+  const card = location.hash && document.getElementById(location.hash.slice(1));
+  if (card) card.focus({ preventScroll: true });
+</script>

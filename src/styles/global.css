@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-poppins), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+
+  /* Brand del progetto, impostato sul <main> di ogni dettaglio. */
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-paper: var(--paper);
+}
+
+@theme {
+  /* Ruoli, non tinte: in scuro cambiano i valori (palette "Scuro" del design system), non le classi. */
+  --color-canvas: #f7f9fd;
+  --color-on-brand: #f7f9fd;
+  --color-brand: #3c64cb;
+  --color-brand-ink: #244189;
+  --color-brand-deep: #244189;
+  --color-brand-top: #dfe5f6;
+  --color-brand-surface: #e7ecf9;
+}
+
+:root {
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #090f20;
+    --color-brand-ink: #b6c6ec;
+    --color-brand-deep: #213b7d;
+    --color-brand-top: #0f1b38;
+    --color-brand-surface: #0f1b38;
+  }
+}
+
+/* Valori fluidi tra i frame approvati a 390 px (mobile) e 1440 px (desktop). */
+:root {
+  --page-x: clamp(20px, 0.686px + 4.9524vw, 72px);
+  --page-top: clamp(20px, 15.543px + 1.1429vw, 32px);
+  --page-bottom: clamp(28px, 26.514px + 0.381vw, 32px);
+  --page-gap: clamp(24px, 18.057px + 1.5238vw, 40px);
+  --frame-radius: clamp(24px, 22.514px + 0.381vw, 28px);
+  --inner-x: clamp(24px, 15.086px + 2.2857vw, 48px);
+  --section-y: clamp(32px, 26.057px + 1.5238vw, 48px);
+  --hero-y: clamp(48px, 42.057px + 1.5238vw, 64px);
+  --hero-h: clamp(400px, 370.286px + 7.619vw, 480px);
+  --display: clamp(72px, 51.2px + 5.3333vw, 128px);
+  --display-box: clamp(80px, 59.2px + 5.3333vw, 136px);
+  --h2: clamp(28px, 23.543px + 1.1429vw, 40px);
+  --h2-lh: clamp(32px, 27.543px + 1.1429vw, 44px);
+  --h3: clamp(20px, 18.514px + 0.381vw, 24px);
+  --h3-lh: clamp(24px, 22.514px + 0.381vw, 28px);
+  --body: clamp(16px, 15.257px + 0.1905vw, 18px);
+  --body-lh: clamp(24px, 22.514px + 0.381vw, 28px);
+  --card-pad: clamp(20px, 18.514px + 0.381vw, 24px);
+  --card-radius: clamp(16px, 14.514px + 0.381vw, 20px);
+  --preview-radius: clamp(12px, 10.514px + 0.381vw, 16px);
+  /* Scala dei raggi: controlli 16 · card 16→20 · contenitori 24→28 · immagini grandi 16→32. */
+  --media-radius: clamp(16px, 10.057px + 1.5238vw, 32px);
+  --content-max: 1296px;
+  /* Molla di Motion spring(0.4, 0) in linear(): senza rimbalzo, perché niente qui viene lanciato dall'utente. */
+  --molla: 750ms linear(0, 0.064, 0.1977, 0.3472, 0.4867, 0.6061, 0.7032, 0.7795, 0.838, 0.8821, 0.9148, 0.9389, 0.9564, 0.969, 0.9781, 0.9846, 0.9892, 0.9924, 0.9947, 0.9963, 0.9974, 0.9982, 0.9988, 0.9991, 1);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Card della home: misure del frame 390 → 1440. */
+  --blog-size: clamp(96px, 66.286px + 7.619vw, 176px);
+  --blog-line: clamp(122px, 85.6px + 9.3333vw, 220px);
+  --blog-left: clamp(20px, 16.286px + 0.9524vw, 30px);
+  --carte-size: clamp(62px, 58.286px + 0.9524vw, 72px);
+  --carte-line: clamp(118px, 112.8px + 1.3333vw, 132px);
+  --msg: clamp(32px, 26.057px + 1.5238vw, 48px);
+  --msg-lh: clamp(36px, 30.057px + 1.5238vw, 52px);
+  --msg-top: clamp(40px, 11.4px + 7.3333vw, 117px);
+  --msg-x: clamp(24px, 21.029px + 0.7619vw, 32px);
+  --paper-w: clamp(163px, 125.857px + 9.5238vw, 263px);
+  --paper-right: clamp(21px, 8px + 3.3333vw, 56px);
+  --paper-bottom: clamp(71px, 57.257px + 3.5238vw, 108px);
+  --pp-logo: clamp(222px, 98.686px + 31.619vw, 554px);
+  --ygo-mark: clamp(96px, 84.114px + 3.0476vw, 128px);
+  --ygo-name: clamp(32px, 23.086px + 2.2857vw, 56px);
+  --ygo-name-lh: clamp(40px, 31.086px + 2.2857vw, 64px);
+}
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overflow-x: clip;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus, var(--color-brand-ink));
+    outline-offset: 3px;
+  }
+  .reveal [data-reveal] {
+    opacity: 0;
+  }
+}
+
+@utility text-eyebrow {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+@utility text-h2 {
+  font-family: var(--font-display);
+  font-size: var(--h2);
+  line-height: var(--h2-lh);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+@utility text-h3 {
+  font-family: var(--font-display);
+  font-size: var(--h3);
+  line-height: var(--h3-lh);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+@utility text-body {
+  font-size: var(--body);
+  line-height: var(--body-lh);
+}
+@utility text-ui {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+@utility text-caption {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+@utility lettering {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.0625em;
+  white-space: nowrap;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Feedback alla pressione, non al rilascio: su touch è l'unico segnale che il tocco è arrivato.
+ * Fuori dai layer, così vale anche sugli elementi con classi transition-* di Tailwind;
+ * usa la proprietà scale, che si somma ai transform già presenti invece di sostituirli.
+ */
+:where(a, button) {
+  transition-property: scale, color, background-color, opacity, filter;
+  transition-duration: 160ms;
+  transition-timing-function: var(--ease-out);
+}
+:where(a, button):active {
+  scale: 0.97;
+  transition-duration: 100ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(a, button):active {
+    scale: none;
+  }
+}
+
+button:not(:disabled),
+[role="button"],
+[role="tab"] {
+  cursor: pointer;
+}

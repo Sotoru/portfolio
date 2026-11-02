@@ -1,65 +1,27 @@
-# Qwik City App ⚡️
+# Portfolio · Paolo Laddomada
 
-- [Qwik Docs](https://qwik.dev/)
-- [Discord](https://qwik.dev/chat)
-- [Qwik GitHub](https://github.com/QwikDev/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
+Sito statico in [Astro](https://docs.astro.build) con Tailwind v4. Nel browser non arriva nessun framework: solo HTML, CSS e due piccoli script.
 
----
+## Comandi
 
-## Project Structure
+| Comando           | Cosa fa                                                              |
+| ----------------- | -------------------------------------------------------------------- |
+| `npm run dev`     | Server di sviluppo su `localhost:4321`                               |
+| `npm run build`   | Controllo dei tipi e build statica in `dist/`                        |
+| `npm run preview` | Serve la build                                                       |
+| `npm run shots`   | Rigenera gli screenshot dell'Interfaccia dalle story (serve Chrome) |
 
-This project is using Qwik with [QwikCity](https://qwik.dev/qwikcity/overview/). QwikCity is just an extra set of tools on top of Qwik to make it easier to build a full site, including directory-based routing, layouts, and more.
+## Dove sta cosa
 
-Inside your project, you'll see the following directory structure:
+- `src/content/progetti.json`: un oggetto per progetto (testi, colori, URL, story ID, immagini). L'`id` diventa l'URL `/<id>/`, `ordine` decide la posizione nella home e il "prossimo progetto".
+- `src/pages/index.astro`: home (01). `src/pages/[slug].astro`: dettaglio (02), con l'espansione della superficie e l'indice delle sezioni.
+- `src/styles/global.css`: token. Le misure con `clamp()` interpolano tra i frame a 390 e a 1440 px del file FigCraft (v46).
+- `src/assets`: SVG esportati da FigCraft e anteprime delle story.
 
-```
-├── public/
-│   └── ...
-└── src/
-    ├── components/
-    │   └── ...
-    └── routes/
-        └── ...
-```
+## Storybook
 
-- `src/routes`: Provides the directory-based routing, which can include a hierarchy of `layout.tsx` layout files, and an `index.tsx` file as the page. Additionally, `index.ts` files are endpoints. Please see the [routing docs](https://qwik.dev/qwikcity/routing/overview/) for more info.
+La sezione Componenti carica le story dal vivo in un unico iframe; l'elenco è `componenti` in `progetti.json`. Link e iframe compaiono solo se `<storybook>/index.json` risponde durante la build, così uno Storybook non pubblicato non produce link rotti. Dopo aver pubblicato lo Storybook di PedagogicPoint su `pedagogic-point-storybook.vercel.app` basta rifare la build.
 
-- `src/components`: Recommended directory for components.
+## Deploy
 
-- `public`: Any static assets, like images, can be placed in the public directory. Please see the [Vite public directory](https://vitejs.dev/guide/assets.html#the-public-directory) for more info.
-
-## Add Integrations and deployment
-
-Use the `pnpm qwik add` command to add additional integrations. Some examples of integrations includes: Cloudflare, Netlify or Express Server, and the [Static Site Generator (SSG)](https://qwik.dev/qwikcity/guides/static-site-generation/).
-
-```shell
-pnpm qwik add # or `pnpm qwik add`
-```
-
-## Development
-
-Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
-
-```shell
-npm start # or `pnpm start`
-```
-
-> Note: during dev mode, Vite may request a significant number of `.js` files. This does not represent a Qwik production build.
-
-## Preview
-
-The preview command will create a production build of the client modules, a production build of `src/entry.preview.tsx`, and run a local server. The preview server is only for convenience to preview a production build locally and should not be used as a production server.
-
-```shell
-pnpm preview # or `pnpm preview`
-```
-
-## Production
-
-The production build will generate client and server modules by running both client and server build commands. The build command will use Typescript to run a type check on the source code.
-
-```shell
-pnpm build # or `pnpm build`
-```
+Vercel, preset Astro, output `dist/`. I redirect permanenti `/progetti` → `/` e `/progetti/<id>` → `/<id>` sono in `vercel.json`.

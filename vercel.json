@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/progetti", "destination": "/", "permanent": true },
+    { "source": "/progetti/:slug", "destination": "/:slug", "permanent": true }
+  ]
+}

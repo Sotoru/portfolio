@@ -1,0 +1,140 @@
+---
+import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
+import { storyIframe, storyUrl } from "../lib/storybook";
+
+interface Props {
+  progetto: CollectionEntry<"progetti">;
+  pubblico: boolean;
+}
+const { progetto, pubblico } = Astro.props;
+const { componenti, storybook } = progetto.data;
+const [primo] = componenti;
+---
+
+<div class="vetrina grid overflow-hidden rounded-(--card-radius) bg-paper text-ink md:grid-cols-[220px_1fr]">
+  <div
+    role="tablist"
+    aria-label="Componenti"
+    aria-orientation="vertical"
+    class="no-scrollbar flex gap-1 overflow-x-auto overscroll-x-contain border-b border-ink/10 p-2 md:flex-col md:overflow-visible md:border-r md:border-b-0"
+  >
+    {
+      componenti.map((c, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${c.story}`}
+          aria-controls="vetrina-pannello"
+          aria-selected={i === 0 ? "true" : "false"}
+          tabindex={i === 0 ? 0 : -1}
+          data-src={pubblico ? storyIframe(storybook, c.story) : undefined}
+          data-href={storyUrl(storybook, c.story)}
+          data-altezza={c.altezza}
+          class="text-ui flex h-11 shrink-0 items-center rounded-xl px-4 text-left whitespace-nowrap text-muted hover:bg-secondary/60 hover:text-ink aria-selected:bg-secondary aria-selected:text-primary"
+        >
+          {c.nome}
+        </button>
+      ))
+    }
+  </div>
+
+  <div id="vetrina-pannello" role="tabpanel" aria-labelledby={`tab-${primo.story}`} class="flex min-w-0 flex-col">
+    <div class="relative bg-secondary transition-[height] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none" style={`height:${primo.altezza}px`}>
+      {
+        pubblico ? (
+          <>
+            <iframe
+              data-src={storyIframe(storybook, primo.story)}
+              title={`Storybook · ${primo.nome}`}
+              class="absolute inset-0 size-full border-0 opacity-0 transition-opacity duration-200"
+            />
+            <span class="carica text-caption pointer-events-none absolute inset-0 flex items-center justify-center text-muted transition-opacity duration-200">
+              Caricamento…
+            </span>
+          </>
+        ) : (
+          <p class="text-caption absolute inset-0 flex items-center justify-center p-6 text-center text-muted">
+            Storybook in arrivo: le story saranno provabili qui.
+          </p>
+        )
+      }
+    </div>
+    <div class="flex items-center justify-between gap-4 p-4">
+      <p class="text-caption text-muted">{pubblico ? "Interagisci con il componente o aprilo in Storybook." : "Anteprima non ancora disponibile."}</p>
+      {
+        pubblico && (
+          <a
+            href={storyUrl(storybook, primo.story)}
+            class="apri text-ui flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-secondary px-4 text-primary hover:brightness-95"
+          >
+            Apri la story <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".vetrina").forEach((vetrina) => {
+    const tabs = [...vetrina.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+    const pannello = vetrina.querySelector<HTMLElement>("[role=tabpanel]")!;
+    const cornice = pannello.firstElementChild as HTMLElement;
+    const iframe = vetrina.querySelector("iframe");
+    const carica = vetrina.querySelector<HTMLElement>(".carica");
+    const apri = vetrina.querySelector<HTMLAnchorElement>(".apri");
+
+    const lista = tabs[0].parentElement!;
+    iframe?.addEventListener("load", () => {
+      iframe.style.opacity = "1";
+      if (carica) carica.style.opacity = "0";
+    });
+
+    const seleziona = (tab: HTMLButtonElement, focus = false) => {
+      if (tab.getAttribute("aria-selected") === "true") return;
+      tabs.forEach((t) => {
+        const attivo = t === tab;
+        t.setAttribute("aria-selected", String(attivo));
+        t.tabIndex = attivo ? 0 : -1;
+      });
+      pannello.setAttribute("aria-labelledby", tab.id);
+      cornice.style.height = `${tab.dataset.altezza}px`;
+      if (focus) tab.focus({ preventScroll: true });
+      // Solo scroll orizzontale della lista su mobile: scrollIntoView sposterebbe anche la pagina.
+      if (tab.offsetLeft < lista.scrollLeft || tab.offsetLeft + tab.offsetWidth > lista.scrollLeft + lista.clientWidth) {
+        lista.scrollLeft = tab.offsetLeft - (lista.clientWidth - tab.offsetWidth) / 2;
+      }
+      if (apri) apri.href = tab.dataset.href!;
+      if (iframe && tab.dataset.src) {
+        iframe.style.opacity = "0";
+        if (carica) carica.style.opacity = "1";
+        iframe.title = `Storybook · ${tab.textContent!.trim()}`;
+        // replace() non aggiunge voci alla cronologia: il tasto Indietro non ripercorre i componenti visti.
+        if (iframe.src) iframe.contentWindow!.location.replace(tab.dataset.src);
+        else iframe.dataset.src = tab.dataset.src;
+      }
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => seleziona(tab));
+      tab.addEventListener("keydown", (e) => {
+        const passo = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+        const fine = { Home: 0, End: tabs.length - 1 }[e.key];
+        if (passo === undefined && fine === undefined) return;
+        e.preventDefault();
+        seleziona(tabs[fine ?? (i + passo! + tabs.length) % tabs.length], true);
+      });
+    });
+    // L'iframe parte solo quando è sullo schermo: alcune story spostano il focus al caricamento,
+    // e un iframe fuori schermo trascinerebbe lì la pagina.
+    if (iframe) {
+      const avvia = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        iframe.src = iframe.dataset.src!;
+        avvia.disconnect();
+      });
+      avvia.observe(iframe);
+    }
+  });
+</script>

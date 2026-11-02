@@ -1,0 +1,60 @@
+---
+// La P resta ferma, il resto della parola ruota. La prima è quella vera del titolo, le altre sono solo decorative.
+const parole = ["Portfolio", "Progetti", "Paolo", "Prototipi", "Percorso"];
+const [prima] = parole;
+---
+
+<h1
+  class="etichetta font-display flex h-12 items-center overflow-hidden rounded-3xl bg-brand px-6 text-[24px] leading-7 font-bold tracking-[-1.08px] text-on-brand"
+  data-parole={JSON.stringify(parole.map((p) => p.slice(1)))}
+>
+  <span class="sr-only">{prima}</span>
+  <span aria-hidden="true" class="flex h-7 overflow-hidden">
+    <span>{prima[0]}</span>
+    <span class="resto flex">{[...prima.slice(1)].map((l) => <span class="inline-block">{l}</span>)}</span>
+  </span>
+</h1>
+
+
+<script>
+  import { animate } from "motion/mini";
+  import { spring, stagger } from "motion";
+
+  const etichetta = document.querySelector<HTMLElement>(".etichetta")!;
+  const resto = etichetta.querySelector<HTMLElement>(".resto")!;
+  const parole: string[] = JSON.parse(etichetta.dataset.parole!);
+  const molla = { type: spring, visualDuration: 0.45, bounce: 0 };
+
+  let indice = 0;
+  const cambia = async () => {
+    indice = (indice + 1) % parole.length;
+    // Le lettere escono verso l'alto una dopo l'altra, le nuove salgono dal basso: come un rullo che gira.
+    await animate(
+      [...resto.children],
+      { transform: ["translateY(0)", "translateY(-110%)"], opacity: [1, 0], filter: ["blur(0)", "blur(2px)"] },
+      { duration: 0.22, ease: [0.55, 0, 1, 0.45], delay: stagger(0.025) },
+    );
+    // La pillola segue la lunghezza della parola: misura la larghezza nuova e ci arriva con la stessa molla delle lettere.
+    const da = etichetta.offsetWidth;
+    resto.replaceChildren(
+      ...[...parole[indice]].map((l) => Object.assign(document.createElement("span"), { className: "inline-block", textContent: l })),
+    );
+    const a = etichetta.offsetWidth;
+    etichetta.style.width = `${da}px`;
+    animate(etichetta, { width: [`${da}px`, `${a}px`] }, molla).then(() => (etichetta.style.width = ""));
+    animate(
+      [...resto.children],
+      { transform: ["translateY(110%)", "translateY(0)"], opacity: [0, 1], filter: ["blur(2px)", "blur(0)"] },
+      { ...molla, delay: stagger(0.03) },
+    );
+  };
+
+  // Ferma in background e con "Riduci movimento": la parola resta Portfolio.
+  if (matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+    let timer = setInterval(cambia, 3200);
+    document.addEventListener("visibilitychange", () => {
+      clearInterval(timer);
+      if (!document.hidden) timer = setInterval(cambia, 3200);
+    });
+  }
+</script>

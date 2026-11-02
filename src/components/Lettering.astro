@@ -1,0 +1,22 @@
+---
+interface Props {
+  testo: string;
+  sopra: string;
+  sotto: string;
+  class?: string;
+}
+const { testo, sopra, sotto, class: cls } = Astro.props;
+---
+
+<!--
+  Linea di base sul bordo della superficie: con line-height 1, Poppins ha la base a 0.85em.
+  La seconda copia, ritagliata sotto la linea, ridisegna la discendente nel colore della superficie.
+  La prima copia scende di 1px oltre il bordo e la seconda parte da lì: niente filo chiaro dovuto all'antialiasing.
+  Il letter-spacing negativo fa sporgere l'ultima lettera dal riquadro: i ritagli lasciano margine ai lati.
+-->
+<span class:list={["lettering absolute z-10 block h-0", cls]} style={`--sopra:${sopra};--sotto:${sotto}`}>
+  <span class="absolute bottom-[-0.15em] left-0 text-(--sopra) [clip-path:inset(-0.2em_-0.2em_calc(0.15em_-_1px)_-0.2em)]">{testo}</span>
+  <span class="absolute top-px left-0 h-[0.4em] overflow-hidden pr-[0.2em] text-(--sotto)" aria-hidden="true">
+    <span class="-mt-[calc(0.85em_+_1px)] block">{testo}</span>
+  </span>
+</span>

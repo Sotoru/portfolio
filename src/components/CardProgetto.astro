@@ -1,0 +1,101 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Icon } from "astro-icon/components";
+import Lettering from "./Lettering.astro";
+import CardBlog from "../assets/progetti/pedagogicpoint/card.svg";
+import CardCarte from "../assets/progetti/ygo-tracker/card.svg";
+
+interface Props {
+  progetto: CollectionEntry<"progetti">;
+  grande?: boolean;
+}
+const { progetto, grande = false } = Astro.props;
+const { id, data } = progetto;
+---
+
+<a
+  id={id}
+  href={`/${id}/`}
+  class:list={[
+    "group relative flex min-h-[300px] flex-col overflow-hidden rounded-(--frame-radius) bg-brand-top text-on-brand outline-offset-4",
+    grande ? "min-h-[440px] lg:min-h-0" : "lg:min-h-[312px]",
+  ]}
+  style={grande ? "--titolo:var(--blog-size);--linea:var(--blog-line)" : "--titolo:var(--carte-size);--linea:var(--carte-line)"}
+>
+  <div class="relative h-(--linea) shrink-0">
+    <Lettering
+      testo={data.titolo}
+      sopra="var(--color-brand)"
+      sotto="var(--color-on-brand)"
+      class:list={["bottom-0 text-(length:--titolo)", grande ? "left-(--blog-left)" : "left-6"]}
+    />
+  </div>
+  <div class="relative flex flex-1 flex-col bg-brand">
+    {
+      grande ? (
+        <>
+          {/* Sopra il foglio, con un contorno del colore della card: quando il foglio sale in hover il testo resta pulito. */}
+          <p class="messaggio font-display relative z-10 mt-(--msg-top) ml-(--msg-x) self-start text-(length:--msg) leading-(--msg-lh) font-bold tracking-[-0.04em] whitespace-pre-line">
+            {data.home.messaggio}
+          </p>
+          <CardBlog
+            aria-hidden="true"
+            class="disegno absolute right-(--paper-right) bottom-(--paper-bottom) h-auto w-(--paper-w)"
+          />
+        </>
+      ) : (
+        <CardCarte aria-hidden="true" class="disegno ventaglio mx-auto mt-3 h-auto w-[272px] max-w-[80%]" />
+      )
+    }
+    <p class="mt-auto flex items-center justify-between gap-4 px-6 pb-5">
+      <span class="text-[16px] leading-6 font-medium lg:text-[18px]">{data.home.prodotto}</span>
+      <Icon name="ph:arrow-up-right" aria-hidden="true" class="freccia size-7" />
+    </p>
+  </div>
+</a>
+
+<style>
+  .messaggio {
+    -webkit-text-stroke: 0.22em var(--color-brand);
+    paint-order: stroke fill;
+  }
+  /* --molla è una transition CSS: riparte dal valore corrente se il mouse esce a metà. */
+  .freccia,
+  .disegno {
+    transition: transform var(--molla);
+  }
+  .disegno {
+    transform-origin: 50% 100%;
+    /* Senza, l'SVG ritaglia le carte quando escono dal viewBox ruotando. */
+    overflow: visible;
+  }
+  /* Carte: stesso gesto e stessi tempi del trio nella lista Deck di YGO Tracker (deck-tile-trio). */
+  .ventaglio > :global(g) {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    a:hover .freccia { transform: translate(2px, -2px); }
+    a:hover .disegno:not(.ventaglio) { transform: translateY(-8px) rotate(-3deg); }
+    a:hover .ventaglio > :global(g:nth-child(1)) { transform: translate(-4%, 3%) rotate(3deg); }
+    a:hover .ventaglio > :global(g:nth-child(2)) { transform: translate(4%, 3%) rotate(-3deg); }
+    a:hover .ventaglio > :global(g:nth-child(3)) { transform: translateY(-8%) scale(1.04); }
+  }
+  /* Da tastiera lo stesso feedback del passaggio del mouse. */
+  a:focus-visible .freccia { transform: translate(2px, -2px); }
+  a:focus-visible .disegno:not(.ventaglio) { transform: translateY(-8px) rotate(-3deg); }
+  a:focus-visible .ventaglio > :global(g:nth-child(1)) { transform: translate(-4%, 3%) rotate(3deg); }
+  a:focus-visible .ventaglio > :global(g:nth-child(2)) { transform: translate(4%, 3%) rotate(-3deg); }
+  a:focus-visible .ventaglio > :global(g:nth-child(3)) { transform: translateY(-8%) scale(1.04); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .freccia,
+    .disegno,
+    .ventaglio > :global(g) {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

@@ -1,0 +1,51 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+// I social vogliono un URL assoluto: serve `site` in astro.config, altrimenti resta relativo.
+const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#F7F9FD" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#090F20" media="(prefers-color-scheme: dark)" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <Font cssVariable="--font-poppins" preload />
+    <Font cssVariable="--font-inter" />
+    <script is:inline>
+      // Nasconde gli elementi da rivelare solo se l'animazione partirà; se lo script non arriva entro 3 s, si mostra tutto.
+      if (matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+        const r = document.documentElement;
+        r.classList.add("reveal");
+        setTimeout(() => r.dataset.motion || r.classList.remove("reveal"), 3000);
+      }
+    </script>
+    <slot name="head" />
+  </head>
+  <body class="bg-canvas">
+    <slot />
+    <Footer />
+    <script>
+      import "../scripts/reveal";
+    </script>
+  </body>
+</html>

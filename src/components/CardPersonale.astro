@@ -1,0 +1,267 @@
+---
+import { Icon } from "astro-icon/components";
+import { carriera as datiCarriera, extra as datiExtra } from "../data/personale";
+
+interface Props {
+  tipo: "carriera" | "extra";
+}
+const { tipo } = Astro.props;
+const carriera = tipo === "carriera";
+
+const sezioni = carriera ? datiCarriera : datiExtra;
+const titolo = carriera ? "Carriera." : "Fuori dal codice.";
+const sopra = carriera ? "Percorso" : "Extra";
+const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep text-on-brand";
+---
+
+<div data-reveal class="personale grid">
+  <button
+    type="button"
+    aria-haspopup="dialog"
+    aria-controls={`dialogo-${tipo}`}
+    class:list={["apri group flex items-center gap-4 rounded-(--frame-radius) px-5 py-4 text-left lg:gap-5 lg:px-6 lg:py-5", colori]}
+  >
+    <span class:list={["flex size-12 shrink-0 items-center justify-center rounded-2xl", carriera ? "bg-brand-ink/8" : "bg-white/10"]}>
+      <Icon name={carriera ? "ph:briefcase" : "ph:sparkle"} aria-hidden="true" class:list={["icona size-6", carriera ? "oscilla" : "brilla"]} />
+    </span>
+    <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+      <span class="font-display text-[18px] leading-6 font-bold tracking-[-0.4px] lg:text-[20px]">{titolo}</span>
+      <span class="text-[14px] leading-5 opacity-80">
+        {carriera ? "Esperienze, studio e certificazioni." : "Interessi, ispirazioni e cose da raccontare."}
+      </span>
+    </span>
+    <Icon
+      name="ph:arrow-up-right"
+      aria-hidden="true"
+      class="freccia size-6 shrink-0"
+    />
+  </button>
+
+  <dialog id={`dialogo-${tipo}`} aria-labelledby={`dialogo-${tipo}-titolo`} class:list={["dialogo", colori]}>
+    <div class="maniglia" aria-hidden="true"></div>
+    <div class="flex flex-col gap-8 p-(--card-pad) md:p-12">
+      <div class="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1">
+        <p class="text-eyebrow col-span-2">{sopra}</p>
+        <h2 id={`dialogo-${tipo}-titolo`} class="text-h2">{titolo}</h2>
+        <form method="dialog">
+          <button
+            class:list={["flex size-12 items-center justify-center rounded-2xl", carriera ? "bg-brand-ink/10 hover:bg-brand-ink/15" : "bg-white/12 hover:bg-white/18"]}
+            aria-label="Chiudi"
+          >
+            <Icon name="ph:x" aria-hidden="true" class="size-5" />
+          </button>
+        </form>
+      </div>
+      {
+        sezioni.map((sezione) => (
+          <section class="flex flex-col gap-2">
+            {sezioni.length > 1 && <h3 class="text-eyebrow opacity-70">{sezione.titolo}</h3>}
+            <ol class="flex flex-col">
+              {sezione.voci.map((voce) => (
+                <li class:list={["grid gap-1 border-t py-5", voce.quando && "md:grid-cols-[140px_1fr] md:gap-6", carriera ? "border-brand-ink/15" : "border-white/15"]}>
+                  {voce.quando && <span class="text-caption pt-0.5 opacity-70">{voce.quando}</span>}
+                  <div class="flex flex-col gap-1">
+                    <p class="text-ui">
+                      {voce.cosa}
+                      {voce.dove && <span class="font-normal opacity-70"> · {voce.dove}</span>}
+                    </p>
+                    {voce.testo && <p class="text-[14px] leading-5 opacity-85">{voce.testo}</p>}
+                    {voce.progetti && (
+                      <ul class="mt-3 flex flex-col gap-3">
+                        {voce.progetti.map((pr) => (
+                          <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", carriera ? "bg-brand-ink/6" : "bg-white/8"]}>
+                            <p class="text-ui">
+                              {pr.nome}
+                              {pr.contesto && <span class="font-normal opacity-70"> · {pr.contesto}</span>}
+                            </p>
+                            <p class="text-[14px] leading-5 opacity-85">{pr.testo}</p>
+                            {pr.stack && <p class="text-caption mt-1 font-semibold opacity-70">{pr.stack}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+            {sezione.certificazioni && (
+              <div class="flex flex-col">
+                {Object.entries(sezione.certificazioni)
+                  .sort(([a], [b]) => Number(b) - Number(a))
+                  .map(([anno, lista]) => (
+                    <div class:list={["grid gap-3 border-t py-5 md:grid-cols-[140px_1fr] md:gap-6", carriera ? "border-brand-ink/15" : "border-white/15"]}>
+                      <p class="font-display text-[24px] leading-7 font-bold tracking-[-0.5px]">{anno}</p>
+                      <ul class="grid gap-2 sm:grid-cols-2">
+                        {lista.map((c) => (
+                          <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", carriera ? "bg-brand-ink/6" : "bg-white/8"]}>
+                            <span class="text-caption font-semibold tracking-[0.4px] uppercase opacity-70">{c.ente}</span>
+                            <span class="text-ui">{c.nome}</span>
+                            <span class="text-caption opacity-70">{c.mese} {anno}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </section>
+        ))
+      }
+    </div>
+  </dialog>
+</div>
+
+<style>
+  /*
+   * Su desktop una finestra centrata, sotto i 768 px un foglio che sale dal basso.
+   * <dialog> nativo: focus intrappolato, Esc e pagina inerte li gestisce il browser.
+   */
+  .dialogo {
+    margin: auto;
+    width: min(720px, 100vw - 2 * var(--page-x));
+    max-height: 86svh;
+    border-radius: var(--frame-radius);
+    overflow: auto;
+    overscroll-behavior: contain;
+    opacity: 0;
+    scale: 0.96;
+    transition:
+      opacity 220ms var(--ease-out),
+      scale 220ms var(--ease-out),
+      translate 380ms var(--ease-out),
+      display 380ms allow-discrete,
+      overlay 380ms allow-discrete;
+  }
+  .dialogo[open] {
+    opacity: 1;
+    scale: 1;
+  }
+  @starting-style {
+    .dialogo[open] {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+  .dialogo::backdrop {
+    background: rgb(20 30 60 / 0);
+    transition:
+      background 220ms ease-out,
+      display 380ms allow-discrete,
+      overlay 380ms allow-discrete;
+  }
+  .dialogo[open]::backdrop {
+    background: rgb(20 30 60 / 0.45);
+  }
+  @starting-style {
+    .dialogo[open]::backdrop {
+      background: rgb(20 30 60 / 0);
+    }
+  }
+  .maniglia {
+    display: none;
+  }
+
+  /* Hover solo di movimento: la valigetta si solleva e oscilla, le scintille ruotano e pulsano, la freccia scatta in avanti. */
+  .apri .icona,
+  .apri .freccia {
+    transition: transform var(--molla);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .apri:hover .freccia {
+      transform: translate(3px, -3px);
+    }
+    .apri:hover .oscilla {
+      animation: oscilla 600ms var(--ease-out);
+      transform: translateY(-2px);
+    }
+    .apri:hover .brilla {
+      transform: rotate(90deg) scale(1.12);
+    }
+  }
+  .apri:focus-visible .freccia {
+    transform: translate(3px, -3px);
+  }
+  @keyframes oscilla {
+    0% { rotate: 0deg; }
+    30% { rotate: -10deg; }
+    60% { rotate: 6deg; }
+    100% { rotate: 0deg; }
+  }
+
+  @media (max-width: 767px) {
+    .dialogo {
+      margin: auto 0 0;
+      width: 100vw;
+      max-width: 100vw;
+      max-height: 88svh;
+      border-radius: var(--frame-radius) var(--frame-radius) 0 0;
+      padding-bottom: env(safe-area-inset-bottom);
+      opacity: 1;
+      scale: 1;
+      translate: 0 100%;
+    }
+    .dialogo[open] {
+      translate: 0 0;
+    }
+    @starting-style {
+      .dialogo[open] {
+        translate: 0 100%;
+      }
+    }
+    .maniglia {
+      display: block;
+      width: 40px;
+      height: 5px;
+      margin: 10px auto 0;
+      border-radius: 3px;
+      background: currentColor;
+      opacity: 0.25;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apri .icona,
+    .apri .freccia {
+      transition: none;
+      animation: none !important;
+      transform: none !important;
+    }
+    .dialogo,
+    .dialogo::backdrop {
+      transition-property: opacity, background, display, overlay;
+      scale: 1;
+      translate: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".personale").forEach((el) => {
+    const apri = el.querySelector<HTMLButtonElement>(".apri")!;
+    const dialogo = el.querySelector<HTMLDialogElement>("dialog")!;
+    apri.addEventListener("click", () => dialogo.showModal());
+    // Click sullo sfondo scurito: chiude. Il click dentro il foglio ha come target un suo figlio, non il dialog.
+    dialogo.addEventListener("click", (e) => e.target === dialogo && dialogo.close());
+    dialogo.addEventListener("close", () => apri.focus({ preventScroll: true }));
+
+    // Su mobile il foglio si chiude anche trascinandolo verso il basso dalla parte alta.
+    let inizio = 0;
+    let delta = 0;
+    dialogo.addEventListener("touchstart", (e) => {
+      inizio = dialogo.scrollTop === 0 ? e.touches[0].clientY : NaN;
+      delta = 0;
+    }, { passive: true });
+    dialogo.addEventListener("touchmove", (e) => {
+      if (Number.isNaN(inizio)) return;
+      delta = Math.max(0, e.touches[0].clientY - inizio);
+      dialogo.style.transition = "none";
+      dialogo.style.translate = `0 ${delta}px`;
+    }, { passive: true });
+    dialogo.addEventListener("touchend", () => {
+      if (Number.isNaN(inizio)) return;
+      dialogo.style.transition = "";
+      dialogo.style.translate = "";
+      if (delta > 120) dialogo.close();
+    });
+  });
+</script>

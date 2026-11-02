@@ -1,0 +1,28 @@
+---
+import { Icon } from "astro-icon/components";
+import CardPersonale from "./CardPersonale.astro";
+
+const repo = "https://github.com/Sotoru/portfolio";
+// Finché il repo non è pubblico il link porta al profilo GitHub, così non si linka una pagina 404.
+const repoPubblico = await fetch(repo, { method: "HEAD", signal: AbortSignal.timeout(5000) })
+  .then((r) => r.ok)
+  .catch(() => false);
+const github = { href: repoPubblico ? repo : "https://github.com/Sotoru", prima: "Codice di questo progetto", link: "su GitHub" };
+---
+
+<footer class="mx-auto flex w-full max-w-[calc(var(--content-max)_+_2*var(--page-x))] flex-col gap-6 px-(--page-x) pt-(--page-gap) pb-(--page-bottom)">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
+    <CardPersonale tipo="carriera" />
+    <CardPersonale tipo="extra" />
+  </div>
+  <div class="crediti text-caption flex px-1 text-brand-ink">
+    <p class="flex items-center gap-1">
+      <span class="opacity-70">{github.prima}</span>
+      <a href={github.href} target="_blank" rel="noopener noreferrer" class="flex items-center gap-1 font-semibold underline-offset-2 hover:underline">
+        {github.link}
+        <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-3" />
+        <span class="sr-only">(si apre in una nuova scheda)</span>
+      </a>
+    </p>
+  </div>
+</footer>

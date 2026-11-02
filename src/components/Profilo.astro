@@ -1,0 +1,65 @@
+---
+import Avatar from "../assets/home/avatar.svg";
+import { Icon } from "astro-icon/components";
+
+const social = [
+  { nome: "Instagram", icona: "ph:instagram-logo", href: "https://www.instagram.com/ladd_xxvi/" },
+  { nome: "LinkedIn", icona: "ph:linkedin-logo", href: "https://www.linkedin.com/in/paolo-laddomada26/" },
+  { nome: "GitHub", icona: "ph:github-logo", href: "https://github.com/Sotoru" },
+];
+---
+
+<section
+  aria-labelledby="profilo-nome"
+  class="flex flex-col gap-2 rounded-(--frame-radius) bg-brand p-(--card-pad) text-on-brand"
+>
+  <div class="flex flex-col gap-3 md:gap-4">
+    <Avatar width={64} height={64} aria-hidden="true" />
+    <h2 id="profilo-nome" class="font-display text-[32px] leading-9 font-bold tracking-[-0.8px] lg:text-[34px] lg:tracking-[-1px]">
+      Paolo<br />Laddomada
+    </h2>
+  </div>
+  <p class="text-caption font-semibold tracking-[0.4px] whitespace-nowrap">FRONT END DEVELOPER</p>
+  <p class="text-caption -my-2 flex items-center gap-2">
+    {/* Il click copia l'indirizzo e prova ad aprire il client di posta: senza un client configurato mailto: da solo non fa nulla. */}
+    <a
+      href="mailto:paolo.laddomada26@gmail.com"
+      class="email -mx-1 inline-flex min-h-8 items-center gap-1.5 rounded-lg px-1 break-all underline-offset-2 hover:underline"
+    >
+      paolo.laddomada26@gmail.com
+      <Icon name="ph:copy" aria-hidden="true" class="size-3.5 shrink-0" />
+    </a>
+    <span class="copiata pointer-events-none font-semibold opacity-0 transition-opacity duration-200" role="status"></span>
+  </p>
+  <ul class="mt-auto -ml-2 flex gap-2">
+    {
+      social.map((s) => (
+        <li>
+          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.nome} (si apre in una nuova scheda)`} class="flex size-12 items-center justify-center rounded-2xl hover:bg-white/14">
+            <Icon name={s.icona} size={32} aria-hidden="true" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<script>
+  const email = document.querySelector<HTMLAnchorElement>(".email")!;
+  const stato = document.querySelector<HTMLElement>(".copiata")!;
+  let timer = 0;
+  email.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(email.href.replace("mailto:", ""));
+      stato.textContent = "Copiata";
+    } catch {
+      return;
+    }
+    stato.style.opacity = "1";
+    clearTimeout(timer);
+    timer = window.setTimeout(() => {
+      stato.style.opacity = "0";
+      setTimeout(() => (stato.textContent = ""), 200);
+    }, 1800);
+  });
+</script>
