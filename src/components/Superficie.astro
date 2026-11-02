@@ -1,0 +1,73 @@
+---
+// Superficie del progetto: si allarga fino ai bordi nei primi --corsa px di scroll e si richiude negli ultimi.
+---
+
+<div class="superficie absolute inset-0 bg-primary" aria-hidden="true"></div>
+
+<style>
+  /* La superficie copre tutta la larghezza della pagina e il clip ne mostra la cornice. */
+  .superficie {
+    --gutter: max(var(--page-x), (100% - var(--content-max)) / 2);
+    --corsa: 160px;
+    clip-path: inset(0 var(--gutter) round var(--frame-radius));
+  }
+  @media (min-width: 640px) {
+    .superficie {
+      --corsa: 240px;
+    }
+  }
+  @keyframes espandi {
+    to {
+      clip-path: inset(0 0 round 0);
+    }
+  }
+  /* Il contrario di espandi, negli ultimi --corsa px di scroll. Il "to" va esplicito: implicito prenderebbe il valore finale di espandi. */
+  @keyframes richiudi {
+    from {
+      clip-path: inset(0 0 round 0);
+    }
+    to {
+      clip-path: inset(0 var(--gutter) round var(--frame-radius));
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      /* richiudi senza fill all'indietro: prima del suo intervallo non copre espandi. */
+      .superficie {
+        animation:
+          espandi linear both,
+          richiudi linear forwards;
+      }
+      /* Regola separata: nella stessa regola il minificatore fonde la timeline nello shorthand, che Chrome scarta. */
+      .superficie.superficie {
+        animation-timeline: scroll(root), scroll(root);
+        animation-range:
+          0 var(--corsa),
+          calc(100% - var(--corsa)) 100%;
+      }
+    }
+    @supports not (animation-timeline: scroll()) {
+      .superficie {
+        clip-path: inset(0 calc(var(--gutter) * (1 - var(--p, 0))) round calc(var(--frame-radius) * (1 - var(--p, 0))));
+      }
+    }
+  }
+</style>
+
+<script>
+  const superficie = document.querySelector<HTMLElement>(".superficie")!;
+  const animabile = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+
+  // Ripiego per i browser senza scroll-driven animations: stesso progresso, aggiornato una volta per frame.
+  if (animabile && !CSS.supports("animation-timeline: scroll()")) {
+    let inAttesa = false;
+    const aggiorna = () => {
+      const corsa = parseFloat(getComputedStyle(superficie).getPropertyValue("--corsa"));
+      const dallaFine = document.documentElement.scrollHeight - innerHeight - scrollY;
+      superficie.style.setProperty("--p", String(Math.min(1, scrollY / corsa, dallaFine / corsa)));
+      inAttesa = false;
+    };
+    addEventListener("scroll", () => inAttesa || ((inAttesa = true), requestAnimationFrame(aggiorna)), { passive: true });
+    aggiorna();
+  }
+</script>

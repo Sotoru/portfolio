@@ -18,6 +18,18 @@
       "textMuted": "#646D74",
       "canvas": "#F9F9FB"
     },
+    "coloriScuri": {
+      "primary": "#1A1C20",
+      "secondary": "#313539",
+      "onSecondary": "#E6E7E9",
+      "onPrimary": "#E6E7E9",
+      "textPrimary": "#E6E7E9",
+      "textMuted": "#9AA0A6",
+      "canvas": "#121316",
+      "accento": "#5AA2FF",
+      "attivo": "#E6E7E9",
+      "onAttivo": "#1A1C20"
+    },
     "home": { "messaggio": "Spazio\nalle idee.", "prodotto": "PedagogicPoint" },
     "logo": "../assets/progetti/pedagogicpoint/logo.svg",
     "panoramica": {
@@ -29,15 +41,15 @@
       "desktop": { "immagine": "../assets/progetti/pedagogicpoint/articolo-desktop.png", "didascalia": "Articolo / Desktop" },
       "mobile": { "immagine": "../assets/progetti/pedagogicpoint/home-mobile.png", "didascalia": "Home / Mobile" }
     },
-    "tipografia": { "font": "Montserrat + Inter", "nota": "Great Vibes + Montez per il wordmark.", "story": "foundations-typography--light", "campione": "../assets/progetti/pedagogicpoint/aa.svg" },
-    "palette": { "nome": "Neutri editoriali", "nota": "Primary #141414 · Accento #0059BB", "story": "foundations-colors--light" },
+    "tipografia": { "font": "Montserrat + Inter", "nota": "Great Vibes + Montez per il wordmark.", "story": "fondamenti-tipografia--light", "campione": "../assets/progetti/pedagogicpoint/aa.svg" },
+    "palette": { "nome": "Neutri editoriali", "nota": "Primary #141414 · Accento #0059BB", "story": "fondamenti-colori--light" },
     "componenti": [
-      { "nome": "Perla Pedagogica", "story": "components-perlapedagogica--breve", "altezza": 320 },
-      { "nome": "Article Card", "story": "components-articlecard--default", "altezza": 360 },
-      { "nome": "Button", "story": "components-button--outline", "altezza": 200 },
-      { "nome": "Dropdown", "story": "components-dropdown--tutte", "altezza": 360 },
-      { "nome": "Theme Toggle", "story": "components-themetoggle--default", "altezza": 200 },
-      { "nome": "Category Tag", "story": "components-categorytag--tutte-le-categorie", "altezza": 200 }
+      { "nome": "Perla Pedagogica", "story": "componenti-perla-pedagogica--breve", "altezza": 320 },
+      { "nome": "Scheda articolo", "story": "componenti-articoli-scheda-articolo--default", "altezza": 360 },
+      { "nome": "Pulsante", "story": "ui-pulsante--outline", "altezza": 200 },
+      { "nome": "Filtro categoria", "story": "ui-filtro-categoria--tutte", "altezza": 360 },
+      { "nome": "Selettore tema", "story": "ui-selettore-tema--default", "altezza": 200 },
+      { "nome": "Etichetta categoria", "story": "ui-etichetta-categoria--tutte-le-categorie", "altezza": 200 }
     ]
   },
   {
@@ -58,6 +70,18 @@
       "textPrimary": "#172540",
       "textMuted": "#445779",
       "canvas": "#F3F6FC"
+    },
+    "coloriScuri": {
+      "primary": "#1F192E",
+      "secondary": "#332A4B",
+      "onSecondary": "#B6A2EB",
+      "onPrimary": "#F3F1F8",
+      "textPrimary": "#F3F1F8",
+      "textMuted": "#B8AFCF",
+      "canvas": "#0D0B14",
+      "accento": "#B6A2EB",
+      "attivo": "#B6A2EB",
+      "onAttivo": "#1F192E"
     },
     "home": { "prodotto": "Ygo Tracker Web" },
     "logo": "../assets/progetti/ygo-tracker/logo.svg",

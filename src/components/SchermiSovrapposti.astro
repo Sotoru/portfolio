@@ -15,14 +15,14 @@ const { desktop, mobile } = interfaccia;
     alt={`${nome}: ${desktop.didascalia}`}
     widths={[640, 960, 1880]}
     sizes="(min-width: 1440px) 1000px, 86vw"
-    class="schermo-desktop block h-auto w-[92%] rounded-(--media-radius) md:w-full"
+    class="schermo-desktop attenua block h-auto w-[92%] rounded-(--media-radius) md:w-full"
   />
   <Image
     src={mobile.immagine}
     alt={`${nome}: ${mobile.didascalia}`}
     widths={[240, 480]}
     sizes="(min-width: 768px) 260px, 34vw"
-    class="schermo-mobile absolute right-[2%] bottom-0 w-[26%] object-cover object-top md:right-0 md:w-[22%]"
+    class="schermo-mobile attenua absolute right-[2%] bottom-0 w-[26%] object-cover object-top md:right-0 md:w-[22%]"
   />
   <figcaption class="sr-only">{desktop.didascalia} e {mobile.didascalia}</figcaption>
 </figure>

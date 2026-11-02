@@ -5,7 +5,10 @@ import Layout from "../layouts/Layout.astro";
 import Lettering from "../components/Lettering.astro";
 import VetrinaComponenti from "../components/VetrinaComponenti.astro";
 import SchermiSovrapposti from "../components/SchermiSovrapposti.astro";
-import { storyUrl, storybookPubblico } from "../lib/storybook";
+import Superficie from "../components/Superficie.astro";
+import IndiceSezioni from "../components/IndiceSezioni.astro";
+import SezioneLinguaggio from "../components/SezioneLinguaggio.astro";
+import { storybookPubblico } from "../lib/storybook";
 
 export async function getStaticPaths() {
   const progetti = (await getCollection("progetti")).sort((a, b) => a.data.ordine - b.data.ordine);
@@ -37,32 +40,39 @@ const risorse = [
   { nome: "Repository", href: data.repository },
 ];
 
+// Se il progetto ha una palette scura propria, in dark si usa quella (light-dark() sceglie in base a color-scheme).
+const s = data.coloriScuri ?? c;
+const tono = (chiaro: string, scuro: string) => (chiaro === scuro ? chiaro : `light-dark(${chiaro}, ${scuro})`);
 const tema = [
-  `--primary:${c.primary}`,
-  `--on-primary:${c.onPrimary}`,
-  `--secondary:${c.secondary}`,
-  `--on-secondary:${c.onSecondary}`,
-  `--ink:${c.textPrimary}`,
-  `--muted:${c.textMuted}`,
-  `--paper:${c.canvas}`,
-  `--focus:${c.onPrimary}`,
+  `--primary:${tono(c.primary, s.primary)}`,
+  `--on-primary:${tono(c.onPrimary, s.onPrimary)}`,
+  `--secondary:${tono(c.secondary, s.secondary)}`,
+  `--on-secondary:${tono(c.onSecondary, s.onSecondary)}`,
+  `--ink:${tono(c.textPrimary, s.textPrimary)}`,
+  `--muted:${tono(c.textMuted, s.textMuted)}`,
+  `--paper:${tono(c.canvas, s.canvas)}`,
+  `--focus:${tono(c.onPrimary, s.onPrimary)}`,
+  `--fondo:var(--color-canvas)`,
+  `--accento-scuro:${data.coloriScuri?.accento ?? s.onPrimary}`,
+  `--attivo:${tono(c.secondary, data.coloriScuri?.attivo ?? s.secondary)}`,
+  `--on-attivo:${tono(c.onSecondary, data.coloriScuri?.onAttivo ?? s.onSecondary)}`,
 ].join(";");
 const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
 ---
 
-<Layout title={`${data.nome} · Paolo Laddomada`} description={data.descrizione}>
+<Layout title={`${data.nome} · Paolo Laddomada`} description={data.descrizione} fondo={tema}>
   <main style={tema} class="pt-(--page-top)">
     <div class:list={[colonna, "relative h-(--display-box)"]}>
       <Lettering
         testo={data.titolo}
         sopra="var(--lettering, var(--primary))"
-        sotto="var(--on-primary)"
+        sotto="var(--lettering-sotto, var(--color-canvas))"
         class="bottom-0 left-(--inner-x) text-(length:--display)"
       />
     </div>
 
     <div class="relative">
-      <div class="superficie absolute inset-0 bg-primary" aria-hidden="true"></div>
+      <Superficie />
 
       <div class:list={[colonna, "relative text-on-primary"]}>
         <nav aria-label="Navigazione" class="testata flex items-center justify-between gap-4 px-(--inner-x) pt-(--section-y)">
@@ -97,32 +107,7 @@ const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
           </a>
         </header>
 
-        <nav data-reveal aria-label="Sezioni del progetto" class="riga-sezioni sticky top-0 z-20 bg-primary py-4">
-          <a
-            href={`/#${id}`}
-            aria-label="Torna indietro"
-            inert
-            class="indietro absolute top-4 left-(--inner-x) z-10 flex size-12 items-center justify-center rounded-2xl bg-secondary text-on-secondary hover:brightness-95 active:brightness-90"
-          >
-            <Icon name="ph:arrow-left" aria-hidden="true" class="size-5" />
-          </a>
-          <ul class="indice no-scrollbar relative flex gap-2 overflow-x-auto overscroll-x-contain px-(--inner-x)">
-            <li class="cursore" role="presentation" aria-hidden="true"></li>
-            {
-              sezioni.map((s, i) => (
-                <li class="shrink-0">
-                  <a
-                    href={`#${s.id}`}
-                    aria-current={i === 0 ? "true" : undefined}
-                    class="text-ui relative z-10 flex h-12 items-center rounded-2xl bg-white/8 px-6 whitespace-nowrap transition-colors duration-200 hover:bg-white/14 aria-[current=true]:bg-secondary aria-[current=true]:text-on-secondary"
-                  >
-                    {s.nome}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </nav>
+        <IndiceSezioni sezioni={sezioni} indietro={`/#${id}`} testata=".testata" />
 
         {
           sezioni.map((s, i) => (
@@ -156,40 +141,7 @@ const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
 
               {s.id === "interfaccia" && <SchermiSovrapposti progetto={progetto} />}
 
-              {s.id === "linguaggio" && (
-                <div class="grid gap-6 md:grid-cols-2">
-                  <div class="flex flex-col gap-4 rounded-(--card-radius) bg-secondary p-(--card-pad) text-ink">
-                    <p class="text-eyebrow text-muted">Tipografia</p>
-                    {data.tipografia.campione ? (
-                      <img src={data.tipografia.campione.src} width={82} height={72} alt="" class="h-[72px] w-auto self-start" />
-                    ) : (
-                      <p aria-hidden="true" class="font-[system-ui] text-[64px] leading-[72px] font-semibold tracking-[-1px] text-primary">Aa</p>
-                    )}
-                    <h3 class="text-h3">{data.tipografia.font}</h3>
-                    <p class="text-caption text-muted">{data.tipografia.nota}</p>
-                    {pubblico && (
-                      <a href={storyUrl(data.storybook, data.tipografia.story)} class="text-ui inline-flex items-center gap-1 self-start text-primary hover:underline">
-                        Tipografia in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
-                      </a>
-                    )}
-                  </div>
-                  <div class="flex flex-col gap-4 rounded-(--card-radius) bg-secondary p-(--card-pad) text-ink">
-                    <p class="text-eyebrow text-muted">Palette</p>
-                    <div class="flex h-[72px] gap-2" aria-hidden="true">
-                      <span class="flex-1 rounded-xl bg-primary" />
-                      <span class="flex-1 rounded-xl bg-paper" />
-                      <span class="flex-1 rounded-xl bg-ink" />
-                    </div>
-                    <h3 class="text-h3">{data.palette.nome}</h3>
-                    <p class="text-caption text-muted">{data.palette.nota}</p>
-                    {pubblico && (
-                      <a href={storyUrl(data.storybook, data.palette.story)} class="text-ui inline-flex items-center gap-1 self-start text-primary hover:underline">
-                        Colori in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
+              {s.id === "linguaggio" && <SezioneLinguaggio progetto={progetto} pubblico={pubblico} />}
 
               {s.id === "componenti" && (
                 <>
@@ -207,7 +159,7 @@ const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
     <nav data-reveal aria-label="Prossimo progetto" class:list={[colonna, "pt-(--page-gap)"]}>
       <a
         href={`/${prossimo.id}/`}
-        style={`background:${prossimo.data.colori.primary};color:${prossimo.data.colori.onPrimary}`}
+        style={`background:${tono(prossimo.data.colori.primary, (prossimo.data.coloriScuri ?? prossimo.data.colori).primary)};color:${tono(prossimo.data.colori.onPrimary, (prossimo.data.coloriScuri ?? prossimo.data.colori).onPrimary)}`}
         class="prossimo flex h-(--prossimo-h) flex-col justify-center gap-3 rounded-(--frame-radius) px-(--inner-x)"
       >
         <span class="text-eyebrow">Prossimo progetto</span>
@@ -225,85 +177,16 @@ const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
   main {
     --prossimo-h: 176px;
   }
-  /*
-   * Freccia indietro agganciata alla riga quando quella in testata esce dallo schermo:
-   * entra con la molla ruotando dalla sinistra, e le voci le fanno posto scorrendo.
-   */
-  .indietro {
-    opacity: 0;
-    transform: translateX(-12px) scale(0.6) rotate(-90deg);
-    filter: blur(4px);
-    transition:
-      transform var(--molla),
-      opacity 200ms ease-out,
-      filter 200ms ease-out;
-  }
-  /*
-   * Il bordo della riga ha lo stesso raggio delle voci: una voce che esce resta arrotondata invece di essere tagliata dritta.
-   * Con la freccia, il bordo sinistro si sposta subito dopo di lei, alla stessa distanza che c'è tra le voci.
-   */
-  .indice {
-    clip-path: inset(0 round 16px);
-    transition:
-      padding-inline-start var(--molla),
-      clip-path var(--molla);
-  }
-  .riga-sezioni[data-agganciata] .indice {
-    clip-path: inset(0 0 0 calc(var(--inner-x) + 56px) round 16px);
-  }
-  /* Pillola attiva che scivola da una voce all'altra, sotto il testo. */
-  .cursore {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 48px;
-    width: var(--w, 0px);
-    transform: translateX(var(--x, 0px));
-    border-radius: 16px;
-    background: var(--secondary);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .indice[data-cursore] .cursore {
-    opacity: 1;
-  }
-  .indice[data-cursore][data-pronto] .cursore {
-    transition:
-      transform var(--molla),
-      width var(--molla);
-  }
-  .indice[data-cursore] a[aria-current="true"] {
-    background: transparent;
-  }
-  .riga-sezioni[data-agganciata] .indietro {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-  .riga-sezioni[data-agganciata] .indice {
-    padding-inline-start: calc(var(--inner-x) + 56px);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .indietro {
-      transform: none;
-      filter: none;
-    }
-    .indietro,
-    .indice,
-    .indice[data-cursore][data-pronto] .cursore {
-      transition: opacity 150ms ease;
-    }
-  }
   @media (min-width: 768px) {
     main {
       --prossimo-h: 196px;
     }
   }
   /* L'ultima sezione occupa quanto basta perché, cliccata nella riga, arrivi anche lei sotto la riga (80 px). */
-  @media (prefers-color-scheme: dark) {
-    main {
-      --lettering: var(--on-primary);
-    }
+  /* In scuro il titolo usa il colore "on" del progetto: il primary di PedagogicPoint sparirebbe sullo sfondo. */
+  main {
+    --lettering: light-dark(var(--primary), var(--on-primary));
+    --lettering-sotto: var(--fondo);
   }
   .coda {
     min-height: calc(100svh - 80px - var(--page-gap) - var(--prossimo-h) - var(--page-bottom));
@@ -319,168 +202,4 @@ const colonna = "mx-auto w-[min(var(--content-max),100%_-_2*var(--page-x))]";
   .prossimo:focus-visible .freccia {
     transform: translateX(4px);
   }
-  /* La superficie copre tutta la larghezza della pagina e il clip ne mostra la cornice. */
-  .superficie {
-    --gutter: max(var(--page-x), (100% - var(--content-max)) / 2);
-    --corsa: 160px;
-    clip-path: inset(0 var(--gutter) round var(--frame-radius));
-  }
-  @media (min-width: 640px) {
-    .superficie {
-      --corsa: 240px;
-    }
-  }
-  @keyframes espandi {
-    to {
-      clip-path: inset(0 0 round 0);
-    }
-  }
-  /* Il contrario di espandi, negli ultimi --corsa px di scroll. Il "to" va esplicito: implicito prenderebbe il valore finale di espandi. */
-  @keyframes richiudi {
-    from {
-      clip-path: inset(0 0 round 0);
-    }
-    to {
-      clip-path: inset(0 var(--gutter) round var(--frame-radius));
-    }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: scroll()) {
-      /* richiudi senza fill all'indietro: prima del suo intervallo non copre espandi. */
-      .superficie {
-        animation:
-          espandi linear both,
-          richiudi linear forwards;
-      }
-      /* Regola separata: nella stessa regola il minificatore fonde la timeline nello shorthand, che Chrome scarta. */
-      main .superficie {
-        animation-timeline: scroll(root), scroll(root);
-        animation-range:
-          0 var(--corsa),
-          calc(100% - var(--corsa)) 100%;
-      }
-    }
-    @supports not (animation-timeline: scroll()) {
-      .superficie {
-        clip-path: inset(0 calc(var(--gutter) * (1 - var(--p, 0))) round calc(var(--frame-radius) * (1 - var(--p, 0))));
-      }
-    }
-  }
 </style>
-
-<script>
-  import { cubicBezier } from "motion";
-
-  const superficie = document.querySelector<HTMLElement>(".superficie")!;
-  const animabile = matchMedia("(prefers-reduced-motion: no-preference)").matches;
-
-  // Ripiego per i browser senza scroll-driven animations: stesso progresso, aggiornato una volta per frame.
-  if (animabile && !CSS.supports("animation-timeline: scroll()")) {
-    let inAttesa = false;
-    const aggiorna = () => {
-      const corsa = parseFloat(getComputedStyle(superficie).getPropertyValue("--corsa"));
-      const dallaFine = document.documentElement.scrollHeight - innerHeight - scrollY;
-      superficie.style.setProperty("--p", String(Math.min(1, scrollY / corsa, dallaFine / corsa)));
-      inAttesa = false;
-    };
-    addEventListener("scroll", () => inAttesa || ((inAttesa = true), requestAnimationFrame(aggiorna)), { passive: true });
-    aggiorna();
-  }
-
-  const riga = document.querySelector<HTMLElement>(".indice")!;
-
-  // La freccia nella riga compare quando quella in testata è uscita dall'alto dello schermo.
-  const rigaSezioni = riga.closest("nav")!;
-  const indietro = rigaSezioni.querySelector<HTMLAnchorElement>(".indietro")!;
-  new IntersectionObserver(([e]) => {
-    const fuori = !e.isIntersecting && e.boundingClientRect.top < 0;
-    if (rigaSezioni.hasAttribute("data-agganciata") === fuori) return;
-    rigaSezioni.toggleAttribute("data-agganciata", fuori);
-    indietro.inert = !fuori;
-    // Lo spazio per la freccia cambia la parte visibile: ricentra quando la riga ha finito di spostarsi.
-    setTimeout(centra, 350);
-  }).observe(document.querySelector(".testata")!);
-  const voci = new Map([...riga.querySelectorAll("a")].map((a) => [a.hash.slice(1), a]));
-  const cursore = riga.querySelector<HTMLElement>(".cursore")!;
-  const corrente = () => riga.querySelector<HTMLAnchorElement>("a[aria-current]");
-  const posiziona = () => {
-    const voce = corrente();
-    if (!voce) return;
-    cursore.style.setProperty("--x", `${voce.parentElement!.offsetLeft}px`);
-    cursore.style.setProperty("--w", `${voce.offsetWidth}px`);
-  };
-  // Porta la voce attiva al centro della parte visibile della riga, cioè a destra della freccia quando c'è.
-  const centra = () => {
-    const li = corrente()?.parentElement;
-    if (!li) return;
-    const inizio = rigaSezioni.hasAttribute("data-agganciata") ? indietro.offsetLeft + indietro.offsetWidth + 8 : 0;
-    const libero = riga.clientWidth - inizio;
-    const fuori = li.offsetLeft - riga.scrollLeft < inizio || li.offsetLeft + li.offsetWidth - riga.scrollLeft > riga.clientWidth;
-    if (!fuori) return;
-    // Solo scroll orizzontale della riga: scrollIntoView sposterebbe anche la pagina.
-    riga.scrollTo({ left: li.offsetLeft - inizio - (libero - li.offsetWidth) / 2, behavior: animabile ? "smooth" : "instant" });
-  };
-  riga.dataset.cursore = "";
-  posiziona();
-  requestAnimationFrame(() => (riga.dataset.pronto = ""));
-  // I font caricati dopo cambiano la larghezza delle voci.
-  new ResizeObserver(posiziona).observe(riga);
-
-  const attiva = (id: string) => {
-    const voce = voci.get(id);
-    if (!voce || voce.hasAttribute("aria-current")) return;
-    voci.forEach((a) => a.removeAttribute("aria-current"));
-    voce.setAttribute("aria-current", "true");
-    posiziona();
-    centra();
-  };
-  // Attiva l'ultima sezione che ha superato il 40% dell'altezza; in cima resta la prima.
-  const sezioni = [...voci.keys()].map((id) => document.getElementById(id)!);
-  let inViaggio = false;
-  const osservatore = new IntersectionObserver(
-    () => inViaggio || attiva((sezioni.filter((s) => s.getBoundingClientRect().top < innerHeight * 0.4).pop() ?? sezioni[0]).id),
-    { rootMargin: "0px 0px -60% 0px" },
-  );
-  sezioni.forEach((s) => osservatore.observe(s));
-
-  // Scorrimento morbido verso la sezione: durata in base alla distanza, interrotto se l'utente scorre da sé.
-  const curva = cubicBezier(0.77, 0, 0.175, 1);
-  // Esattamente l'altezza della riga: la prima sezione la segue nel flusso, quindi così la riga arriva in cima e si blocca anche lì.
-  const offset = () => riga.closest("nav")!.offsetHeight;
-  let corsa = 0;
-  const ferma = () => {
-    cancelAnimationFrame(corsa);
-    inViaggio = false;
-  };
-  ["wheel", "touchstart", "keydown"].forEach((e) => addEventListener(e, ferma, { passive: true }));
-
-  riga.addEventListener("click", (e) => {
-    const voce = (e.target as Element).closest<HTMLAnchorElement>("a[href^='#']");
-    const sezione = voce && document.getElementById(voce.hash.slice(1));
-    if (!sezione) return;
-    e.preventDefault();
-    history.replaceState(null, "", voce.hash);
-    ferma();
-    attiva(sezione.id);
-    const da = scrollY;
-    const a = Math.min(sezione.getBoundingClientRect().top + scrollY - offset(), document.documentElement.scrollHeight - innerHeight);
-    const arrivo = () => {
-      inViaggio = false;
-      sezione.focus({ preventScroll: true });
-    };
-    if (!animabile) {
-      scrollTo(0, a);
-      return arrivo();
-    }
-    const durata = Math.min(900, Math.max(450, Math.abs(a - da) * 0.35));
-    const t0 = performance.now();
-    inViaggio = true;
-    const passo = (t: number) => {
-      const p = Math.min(1, (t - t0) / durata);
-      scrollTo(0, da + (a - da) * curva(p));
-      if (p < 1) corsa = requestAnimationFrame(passo);
-      else arrivo();
-    };
-    corsa = requestAnimationFrame(passo);
-  });
-</script>

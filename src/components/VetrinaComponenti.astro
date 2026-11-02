@@ -31,7 +31,7 @@ const [primo] = componenti;
           data-src={pubblico ? storyIframe(storybook, c.story) : undefined}
           data-href={storyUrl(storybook, c.story)}
           data-altezza={c.altezza}
-          class="text-ui flex h-11 shrink-0 items-center rounded-xl px-4 text-left whitespace-nowrap text-muted hover:bg-secondary/60 hover:text-ink aria-selected:bg-secondary aria-selected:text-primary"
+          class="text-ui flex h-11 shrink-0 items-center rounded-xl px-4 text-left whitespace-nowrap text-muted hover:bg-secondary/60 hover:text-ink aria-selected:bg-secondary aria-selected:text-on-secondary"
         >
           {c.nome}
         </button>
@@ -66,7 +66,7 @@ const [primo] = componenti;
         pubblico && (
           <a
             href={storyUrl(storybook, primo.story)}
-            class="apri text-ui flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-secondary px-4 text-primary hover:brightness-95"
+            class="apri text-ui flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-secondary px-4 text-on-secondary hover:brightness-95"
           >
             Apri la story <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
           </a>

@@ -16,7 +16,7 @@
 
 @theme {
   /* Ruoli, non tinte: in scuro cambiano i valori (palette "Scuro" del design system), non le classi. */
-  --color-canvas: #f7f9fd;
+  --color-canvas: #eff2fb;
   --color-on-brand: #f7f9fd;
   --color-brand: #3c64cb;
   --color-brand-ink: #244189;
@@ -28,14 +28,20 @@
 :root {
   color-scheme: light dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #090f20;
-    --color-brand-ink: #b6c6ec;
-    --color-brand-deep: #213b7d;
-    --color-brand-top: #0f1b38;
-    --color-brand-surface: #0f1b38;
-  }
+/* Tema: segue il sistema, oppure la scelta salvata dal selettore in home (data-tema su <html>). */
+:root[data-tema="chiaro"] {
+  color-scheme: light;
+}
+:root[data-tema="scuro"] {
+  color-scheme: dark;
+}
+:root {
+  /* Fondo: L96 in chiaro, L5 in scuro della scala del portfolio (hsl 223° 58%): quasi nero, ma nella stessa tonalità. */
+  --color-canvas: light-dark(#eff2fb, #050a14);
+  --color-brand-ink: light-dark(#244189, #b6c6ec);
+  --color-brand-deep: light-dark(#244189, #213b7d);
+  --color-brand-top: light-dark(#dfe5f6, #0f1b38);
+  --color-brand-surface: light-dark(#e7ecf9, #0f1b38);
 }
 
 /* Valori fluidi tra i frame approvati a 390 px (mobile) e 1440 px (desktop). */
@@ -180,4 +186,10 @@ button:not(:disabled),
 [role="button"],
 [role="tab"] {
   cursor: pointer;
+}
+
+/* In scuro screenshot e disegni chiari si abbassano un poco, come fa il sistema con le pagine chiare. */
+:root[data-tema="scuro"] .attenua,
+:root:not([data-tema="chiaro"]) .attenua {
+  filter: brightness(light-dark(1, 0.88));
 }

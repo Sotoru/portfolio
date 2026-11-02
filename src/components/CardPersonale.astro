@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import { carriera as datiCarriera, extra as datiExtra } from "../data/personale";
+import ContenutoPersonale from "./ContenutoPersonale.astro";
 
 interface Props {
   tipo: "carriera" | "extra";
@@ -21,7 +22,7 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
     aria-controls={`dialogo-${tipo}`}
     class:list={["apri group flex items-center gap-4 rounded-(--frame-radius) px-5 py-4 text-left lg:gap-5 lg:px-6 lg:py-5", colori]}
   >
-    <span class:list={["flex size-12 shrink-0 items-center justify-center rounded-2xl", carriera ? "bg-brand-ink/8" : "bg-white/10"]}>
+    <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-current/10">
       <Icon name={carriera ? "ph:briefcase" : "ph:sparkle"} aria-hidden="true" class:list={["icona size-6", carriera ? "oscilla" : "brilla"]} />
     </span>
     <span class="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -45,68 +46,14 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
         <h2 id={`dialogo-${tipo}-titolo`} class="text-h2">{titolo}</h2>
         <form method="dialog">
           <button
-            class:list={["flex size-12 items-center justify-center rounded-2xl", carriera ? "bg-brand-ink/10 hover:bg-brand-ink/15" : "bg-white/12 hover:bg-white/18"]}
+            class="flex size-12 items-center justify-center rounded-2xl bg-current/10 hover:bg-current/15"
             aria-label="Chiudi"
           >
             <Icon name="ph:x" aria-hidden="true" class="size-5" />
           </button>
         </form>
       </div>
-      {
-        sezioni.map((sezione) => (
-          <section class="flex flex-col gap-2">
-            {sezioni.length > 1 && <h3 class="text-eyebrow opacity-70">{sezione.titolo}</h3>}
-            <ol class="flex flex-col">
-              {sezione.voci.map((voce) => (
-                <li class:list={["grid gap-1 border-t py-5", voce.quando && "md:grid-cols-[140px_1fr] md:gap-6", carriera ? "border-brand-ink/15" : "border-white/15"]}>
-                  {voce.quando && <span class="text-caption pt-0.5 opacity-70">{voce.quando}</span>}
-                  <div class="flex flex-col gap-1">
-                    <p class="text-ui">
-                      {voce.cosa}
-                      {voce.dove && <span class="font-normal opacity-70"> · {voce.dove}</span>}
-                    </p>
-                    {voce.testo && <p class="text-[14px] leading-5 opacity-85">{voce.testo}</p>}
-                    {voce.progetti && (
-                      <ul class="mt-3 flex flex-col gap-3">
-                        {voce.progetti.map((pr) => (
-                          <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", carriera ? "bg-brand-ink/6" : "bg-white/8"]}>
-                            <p class="text-ui">
-                              {pr.nome}
-                              {pr.contesto && <span class="font-normal opacity-70"> · {pr.contesto}</span>}
-                            </p>
-                            <p class="text-[14px] leading-5 opacity-85">{pr.testo}</p>
-                            {pr.stack && <p class="text-caption mt-1 font-semibold opacity-70">{pr.stack}</p>}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ol>
-            {sezione.certificazioni && (
-              <div class="flex flex-col">
-                {Object.entries(sezione.certificazioni)
-                  .sort(([a], [b]) => Number(b) - Number(a))
-                  .map(([anno, lista]) => (
-                    <div class:list={["grid gap-3 border-t py-5 md:grid-cols-[140px_1fr] md:gap-6", carriera ? "border-brand-ink/15" : "border-white/15"]}>
-                      <p class="font-display text-[24px] leading-7 font-bold tracking-[-0.5px]">{anno}</p>
-                      <ul class="grid gap-2 sm:grid-cols-2">
-                        {lista.map((c) => (
-                          <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", carriera ? "bg-brand-ink/6" : "bg-white/8"]}>
-                            <span class="text-caption font-semibold tracking-[0.4px] uppercase opacity-70">{c.ente}</span>
-                            <span class="text-ui">{c.nome}</span>
-                            <span class="text-caption opacity-70">{c.mese} {anno}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </section>
-        ))
-      }
+      <ContenutoPersonale sezioni={sezioni} />
     </div>
   </dialog>
 </div>

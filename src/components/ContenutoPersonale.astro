@@ -1,0 +1,64 @@
+---
+import type { Sezione } from "../data/personale";
+
+interface Props {
+  sezioni: Sezione[];
+}
+const { sezioni } = Astro.props;
+---
+
+{
+  sezioni.map((sezione) => (
+    <section class="flex flex-col gap-2">
+      {sezioni.length > 1 && <h3 class="text-eyebrow opacity-70">{sezione.titolo}</h3>}
+      <ol class="flex flex-col">
+        {sezione.voci.map((voce) => (
+          <li class:list={["grid gap-1 border-t py-5", voce.quando && "md:grid-cols-[140px_1fr] md:gap-6", "border-current/15"]}>
+            {voce.quando && <span class="text-caption pt-0.5 opacity-70">{voce.quando}</span>}
+            <div class="flex flex-col gap-1">
+              <p class="text-ui">
+                {voce.cosa}
+                {voce.dove && <span class="font-normal opacity-70"> · {voce.dove}</span>}
+              </p>
+              {voce.testo && <p class="text-[14px] leading-5 opacity-85">{voce.testo}</p>}
+              {voce.progetti && (
+                <ul class="mt-3 flex flex-col gap-3">
+                  {voce.progetti.map((pr) => (
+                    <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", "bg-current/7"]}>
+                      <p class="text-ui">
+                        {pr.nome}
+                        {pr.contesto && <span class="font-normal opacity-70"> · {pr.contesto}</span>}
+                      </p>
+                      <p class="text-[14px] leading-5 opacity-85">{pr.testo}</p>
+                      {pr.stack && <p class="text-caption mt-1 font-semibold opacity-70">{pr.stack}</p>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+      {sezione.certificazioni && (
+        <div class="flex flex-col">
+          {Object.entries(sezione.certificazioni)
+            .sort(([a], [b]) => Number(b) - Number(a))
+            .map(([anno, lista]) => (
+              <div class:list={["grid gap-3 border-t py-5 md:grid-cols-[140px_1fr] md:gap-6", "border-current/15"]}>
+                <p class="font-display text-[24px] leading-7 font-bold tracking-[-0.5px]">{anno}</p>
+                <ul class="grid gap-2 sm:grid-cols-2">
+                  {lista.map((c) => (
+                    <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", "bg-current/7"]}>
+                      <span class="text-caption font-semibold tracking-[0.4px] uppercase opacity-70">{c.ente}</span>
+                      <span class="text-ui">{c.nome}</span>
+                      <span class="text-caption opacity-70">{c.mese} {anno}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+        </div>
+      )}
+    </section>
+  ))
+}

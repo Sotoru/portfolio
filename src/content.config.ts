@@ -17,6 +17,7 @@ const progetti = defineCollection({
       repository: z.url(),
       design: z.url(),
       storybook: z.url().refine((u) => !/localhost|127\.0\.0\.1/.test(u), "Storybook deve essere pubblico"),
+      coloriScuri: z.object({ primary: colore, secondary: colore, onSecondary: colore, onPrimary: colore, textPrimary: colore, textMuted: colore, canvas: colore, accento: colore, attivo: colore, onAttivo: colore }).optional(),
       colori: z.object({
         primary: colore,
         secondary: colore,

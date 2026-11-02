@@ -1,0 +1,213 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  sezioni: readonly { id: string; nome: string }[];
+  /** Dove porta la freccia indietro. */
+  indietro: string;
+  /** Selettore dell'elemento che, uscito dall'alto, fa comparire la freccia nella riga. */
+  testata: string;
+}
+const { sezioni, indietro, testata } = Astro.props;
+---
+
+<nav data-reveal aria-label="Sezioni del progetto" data-testata={testata} class="riga-sezioni sticky top-0 z-20 bg-primary py-4">
+  <a
+    href={indietro}
+    aria-label="Torna indietro"
+    inert
+    class="indietro absolute top-4 left-(--inner-x) z-10 flex size-12 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--primary),white_8%)] text-on-primary hover:bg-[color-mix(in_srgb,var(--primary),white_14%)]"
+  >
+    <Icon name="ph:arrow-left" aria-hidden="true" class="size-5" />
+  </a>
+  <ul class="indice no-scrollbar relative flex gap-2 overflow-x-auto overscroll-x-contain px-(--inner-x)">
+    <li class="cursore" role="presentation" aria-hidden="true"></li>
+    {
+      sezioni.map((s, i) => (
+        <li class="shrink-0">
+          <a
+            href={`#${s.id}`}
+            aria-current={i === 0 ? "true" : undefined}
+            class="text-ui relative z-10 flex h-12 items-center rounded-2xl bg-white/8 px-6 whitespace-nowrap transition-colors duration-200 hover:bg-white/14 aria-[current=true]:bg-(--attivo) aria-[current=true]:text-(--on-attivo)"
+          >
+            {s.nome}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  /*
+   * Freccia indietro agganciata alla riga quando quella in testata esce dallo schermo:
+   * entra con la molla ruotando dalla sinistra, e le voci le fanno posto scorrendo.
+   */
+  .indietro {
+    opacity: 0;
+    transform: translateX(-12px) scale(0.6) rotate(-90deg);
+    filter: blur(4px);
+    transition:
+      transform var(--molla),
+      opacity 200ms ease-out,
+      filter 200ms ease-out;
+  }
+  /*
+   * Il bordo della riga ha lo stesso raggio delle voci: una voce che esce resta arrotondata invece di essere tagliata dritta.
+   * Con la freccia, il bordo sinistro si sposta subito dopo di lei, alla stessa distanza che c'è tra le voci.
+   */
+  .indice {
+    clip-path: inset(0 round 16px);
+    transition:
+      padding-inline-start var(--molla),
+      clip-path var(--molla);
+  }
+  .riga-sezioni[data-agganciata] .indice {
+    clip-path: inset(0 0 0 calc(var(--inner-x) + 56px) round 16px);
+  }
+  /* Pillola attiva che scivola da una voce all'altra, sotto il testo. */
+  .cursore {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 48px;
+    width: var(--w, 0px);
+    transform: translateX(var(--x, 0px));
+    border-radius: 16px;
+    background: var(--attivo);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .indice[data-cursore] .cursore {
+    opacity: 1;
+  }
+  .indice[data-cursore][data-pronto] .cursore {
+    transition:
+      transform var(--molla),
+      width var(--molla);
+  }
+  .indice[data-cursore] a[aria-current="true"] {
+    background: transparent;
+  }
+  .riga-sezioni[data-agganciata] .indietro {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .riga-sezioni[data-agganciata] .indice {
+    padding-inline-start: calc(var(--inner-x) + 56px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .indietro {
+      transform: none;
+      filter: none;
+    }
+    .indietro,
+    .indice,
+    .indice[data-cursore][data-pronto] .cursore {
+      transition: opacity 150ms ease;
+    }
+  }
+</style>
+
+<script>
+  import { cubicBezier } from "motion";
+
+  const animabile = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+  const riga = document.querySelector<HTMLElement>(".indice")!;
+
+  // La freccia nella riga compare quando quella in testata è uscita dall'alto dello schermo.
+  const rigaSezioni = riga.closest("nav")!;
+  const indietro = rigaSezioni.querySelector<HTMLAnchorElement>(".indietro")!;
+  new IntersectionObserver(([e]) => {
+    const fuori = !e.isIntersecting && e.boundingClientRect.top < 0;
+    if (rigaSezioni.hasAttribute("data-agganciata") === fuori) return;
+    rigaSezioni.toggleAttribute("data-agganciata", fuori);
+    indietro.inert = !fuori;
+    // Lo spazio per la freccia cambia la parte visibile: ricentra quando la riga ha finito di spostarsi.
+    setTimeout(centra, 350);
+  }).observe(document.querySelector(rigaSezioni.dataset.testata!)!);
+  const voci = new Map([...riga.querySelectorAll("a")].map((a) => [a.hash.slice(1), a]));
+  const cursore = riga.querySelector<HTMLElement>(".cursore")!;
+  const corrente = () => riga.querySelector<HTMLAnchorElement>("a[aria-current]");
+  const posiziona = () => {
+    const voce = corrente();
+    if (!voce) return;
+    cursore.style.setProperty("--x", `${voce.parentElement!.offsetLeft}px`);
+    cursore.style.setProperty("--w", `${voce.offsetWidth}px`);
+  };
+  // Porta la voce attiva al centro della parte visibile della riga, cioè a destra della freccia quando c'è.
+  const centra = () => {
+    const li = corrente()?.parentElement;
+    if (!li) return;
+    const inizio = rigaSezioni.hasAttribute("data-agganciata") ? indietro.offsetLeft + indietro.offsetWidth + 8 : 0;
+    const libero = riga.clientWidth - inizio;
+    const fuori = li.offsetLeft - riga.scrollLeft < inizio || li.offsetLeft + li.offsetWidth - riga.scrollLeft > riga.clientWidth;
+    if (!fuori) return;
+    // Solo scroll orizzontale della riga: scrollIntoView sposterebbe anche la pagina.
+    riga.scrollTo({ left: li.offsetLeft - inizio - (libero - li.offsetWidth) / 2, behavior: animabile ? "smooth" : "instant" });
+  };
+  riga.dataset.cursore = "";
+  posiziona();
+  requestAnimationFrame(() => (riga.dataset.pronto = ""));
+  // I font caricati dopo cambiano la larghezza delle voci.
+  new ResizeObserver(posiziona).observe(riga);
+
+  const attiva = (id: string) => {
+    const voce = voci.get(id);
+    if (!voce || voce.hasAttribute("aria-current")) return;
+    voci.forEach((a) => a.removeAttribute("aria-current"));
+    voce.setAttribute("aria-current", "true");
+    posiziona();
+    centra();
+  };
+  // Attiva l'ultima sezione che ha superato il 40% dell'altezza; in cima resta la prima.
+  const sezioni = [...voci.keys()].map((id) => document.getElementById(id)!);
+  let inViaggio = false;
+  const osservatore = new IntersectionObserver(
+    () => inViaggio || attiva((sezioni.filter((s) => s.getBoundingClientRect().top < innerHeight * 0.4).pop() ?? sezioni[0]).id),
+    { rootMargin: "0px 0px -60% 0px" },
+  );
+  sezioni.forEach((s) => osservatore.observe(s));
+
+  // Scorrimento morbido verso la sezione: durata in base alla distanza, interrotto se l'utente scorre da sé.
+  const curva = cubicBezier(0.77, 0, 0.175, 1);
+  // Esattamente l'altezza della riga: la prima sezione la segue nel flusso, quindi così la riga arriva in cima e si blocca anche lì.
+  const offset = () => riga.closest("nav")!.offsetHeight;
+  let corsa = 0;
+  const ferma = () => {
+    cancelAnimationFrame(corsa);
+    inViaggio = false;
+  };
+  ["wheel", "touchstart", "keydown"].forEach((e) => addEventListener(e, ferma, { passive: true }));
+
+  riga.addEventListener("click", (e) => {
+    const voce = (e.target as Element).closest<HTMLAnchorElement>("a[href^='#']");
+    const sezione = voce && document.getElementById(voce.hash.slice(1));
+    if (!sezione) return;
+    e.preventDefault();
+    history.replaceState(null, "", voce.hash);
+    ferma();
+    attiva(sezione.id);
+    const da = scrollY;
+    const a = Math.min(sezione.getBoundingClientRect().top + scrollY - offset(), document.documentElement.scrollHeight - innerHeight);
+    const arrivo = () => {
+      inViaggio = false;
+      sezione.focus({ preventScroll: true });
+    };
+    if (!animabile) {
+      scrollTo(0, a);
+      return arrivo();
+    }
+    const durata = Math.min(900, Math.max(450, Math.abs(a - da) * 0.35));
+    const t0 = performance.now();
+    inViaggio = true;
+    const passo = (t: number) => {
+      const p = Math.min(1, (t - t0) / durata);
+      scrollTo(0, da + (a - da) * curva(p));
+      if (p < 1) corsa = requestAnimationFrame(passo);
+      else arrivo();
+    };
+    corsa = requestAnimationFrame(passo);
+  });
+</script>

@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import Profilo from "../components/Profilo.astro";
 import CardProgetto from "../components/CardProgetto.astro";
 import Etichetta from "../components/Etichetta.astro";
+import SelettoreTema from "../components/SelettoreTema.astro";
 
 const progetti = (await getCollection("progetti")).sort((a, b) => a.data.ordine - b.data.ordine);
 const [primo, ...altri] = progetti;
@@ -11,8 +12,9 @@ const [primo, ...altri] = progetti;
 
 <Layout title="Paolo Laddomada · Portfolio" description="Portfolio di Paolo Laddomada, Front End Developer.">
   <div class="mx-auto flex max-w-[calc(var(--content-max)_+_2*var(--page-x))] flex-col gap-(--page-gap) px-(--page-x) pt-(--page-top)">
-    <header class="flex h-16 items-center">
+    <header class="flex h-16 items-center justify-between gap-4">
       <Etichetta />
+      <SelettoreTema />
     </header>
 
     <main class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-12">

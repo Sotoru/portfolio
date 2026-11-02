@@ -1,0 +1,94 @@
+---
+import { Icon } from "astro-icon/components";
+
+const scelte = [
+  { valore: "chiaro", nome: "Tema chiaro", icona: "ph:sun" },
+  { valore: "sistema", nome: "Tema di sistema", icona: "ph:circle-half" },
+  { valore: "scuro", nome: "Tema scuro", icona: "ph:moon" },
+];
+---
+
+<div role="radiogroup" aria-label="Tema" class="selettore-tema relative flex h-10 shrink-0 items-center gap-1 rounded-3xl bg-brand-surface p-1 text-brand-ink sm:h-12">
+  <span class="pallino" aria-hidden="true"></span>
+  {
+    scelte.map((s) => (
+      <button
+        type="button"
+        role="radio"
+        data-tema={s.valore}
+        aria-checked={s.valore === "sistema" ? "true" : "false"}
+        aria-label={s.nome}
+        title={s.nome}
+        class="relative z-10 flex size-8 items-center justify-center rounded-full opacity-70 transition-[opacity,color] duration-200 hover:opacity-100 aria-checked:text-on-brand aria-checked:opacity-100 sm:size-10"
+      >
+        <Icon name={s.icona} aria-hidden="true" class="size-5" />
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  /* Pallino che scivola sotto la scelta attiva, con la stessa molla del resto del sito. */
+  /* Pallino nel blu del brand: si vede uguale in chiaro e in scuro. */
+  .pallino {
+    --lato: 32px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: var(--lato);
+    height: var(--lato);
+    border-radius: 9999px;
+    background: var(--color-brand);
+    translate: calc(var(--i, 1) * (var(--lato) + 4px)) 0;
+    transition: translate var(--molla);
+  }
+  @media (min-width: 640px) {
+    .pallino {
+      --lato: 40px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pallino {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const gruppo = document.querySelector<HTMLElement>(".selettore-tema")!;
+  const voci = [...gruppo.querySelectorAll<HTMLButtonElement>("[role=radio]")];
+  const radice = document.documentElement;
+
+  const mostra = (tema: string) => {
+    voci.forEach((v, i) => {
+      const attiva = v.dataset.tema === tema;
+      v.setAttribute("aria-checked", String(attiva));
+      v.tabIndex = attiva ? 0 : -1;
+      if (attiva) gruppo.style.setProperty("--i", String(i));
+    });
+  };
+  const applica = (tema: string) => {
+    if (tema === "sistema") {
+      delete radice.dataset.tema;
+      localStorage.removeItem("tema");
+    } else {
+      radice.dataset.tema = tema;
+      localStorage.setItem("tema", tema);
+    }
+    mostra(tema);
+  };
+
+  mostra(radice.dataset.tema ?? "sistema");
+  voci.forEach((v, i) => {
+    v.addEventListener("click", () => applica(v.dataset.tema!));
+    // Radiogroup: le frecce spostano e selezionano, come i radio nativi.
+    v.addEventListener("keydown", (e) => {
+      const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (passo === undefined) return;
+      e.preventDefault();
+      const prossima = voci[(i + passo + voci.length) % voci.length];
+      applica(prossima.dataset.tema!);
+      prossima.focus();
+    });
+  });
+</script>

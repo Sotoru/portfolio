@@ -6,8 +6,10 @@ import Footer from "../components/Footer.astro";
 interface Props {
   title: string;
   description: string;
+  /** Variabili di tema della pagina (es. il progetto): applicate a <body>, così anche footer e bordi le ereditano. */
+  fondo?: string;
 }
-const { title, description } = Astro.props;
+const { title, description, fondo } = Astro.props;
 // I social vogliono un URL assoluto: serve `site` in astro.config, altrimenti resta relativo.
 const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
 ---
@@ -17,8 +19,21 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#F7F9FD" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#090F20" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#EFF2FB" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#050A14" media="(prefers-color-scheme: dark)" />
+    <script is:inline>
+      // Prima del primo disegno: applica il tema scelto in home, così non c'è un lampo del tema di sistema.
+      try {
+        const t = localStorage.getItem("tema");
+        if (t === "chiaro" || t === "scuro") {
+          document.documentElement.dataset.tema = t;
+          document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+            m.media = "all";
+            m.content = t === "scuro" ? "#050A14" : "#EFF2FB";
+          });
+        }
+      } catch {}
+    </script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -41,7 +56,7 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
     </script>
     <slot name="head" />
   </head>
-  <body class="bg-canvas">
+  <body class="bg-(--fondo,var(--color-canvas))" style={fondo}>
     <slot />
     <Footer />
     <script>
