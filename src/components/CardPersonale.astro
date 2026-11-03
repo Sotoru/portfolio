@@ -2,16 +2,18 @@
 import { Icon } from "astro-icon/components";
 import { carriera as datiCarriera, extra as datiExtra } from "../data/personale";
 import ContenutoPersonale from "./ContenutoPersonale.astro";
+import { i18n } from "../i18n";
 
 interface Props {
   tipo: "carriera" | "extra";
 }
 const { tipo } = Astro.props;
 const carriera = tipo === "carriera";
+const { t } = i18n(Astro.params);
 
 const sezioni = carriera ? datiCarriera : datiExtra;
-const titolo = carriera ? "Carriera." : "Fuori dal codice.";
-const sopra = carriera ? "Percorso" : "Extra";
+const titolo = carriera ? t("carriera") : t("extra");
+const sopra = carriera ? t("carrieraSopra") : t("extraSopra");
 const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep text-on-brand";
 ---
 
@@ -28,7 +30,7 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
     <span class="flex min-w-0 flex-1 flex-col gap-0.5">
       <span class="font-display text-[18px] leading-6 font-bold tracking-[-0.4px] lg:text-[20px]">{titolo}</span>
       <span class="text-[14px] leading-5 opacity-80">
-        {carriera ? "Esperienze, studio e certificazioni." : "Videogiochi, musica, film e altri interessi."}
+        {carriera ? t("carrieraSotto") : t("extraSotto")}
       </span>
     </span>
     <Icon
@@ -46,7 +48,7 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
         <form method="dialog" class="col-start-2 row-span-2 row-start-1">
           <button
             class="flex size-12 items-center justify-center rounded-2xl bg-current/10 hover:bg-current/15"
-            aria-label="Chiudi"
+            aria-label={t("chiudi")}
           >
             <Icon name="ph:x" aria-hidden="true" class="size-5" />
           </button>

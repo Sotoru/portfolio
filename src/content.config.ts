@@ -1,8 +1,11 @@
 import { defineCollection } from "astro:content";
 import { file } from "astro/loaders";
 import { z } from "astro/zod";
+import { lingue } from "./i18n";
 
 const colore = z.string().regex(/^#[0-9A-F]{6}$/i);
+// Testo tradotto: uno per lingua, tutte obbligatorie.
+const testo = z.object(Object.fromEntries(lingue.map((l) => [l, z.string()])) as Record<(typeof lingue)[number], z.ZodString>);
 const storyId = z.string().regex(/^[a-z0-9-]+--[a-z0-9-]+$/);
 
 const progetti = defineCollection({
@@ -10,9 +13,9 @@ const progetti = defineCollection({
   schema: ({ image }) =>
     z.object({
       ordine: z.number().int(),
-      titolo: z.string(),
+      titolo: testo,
       nome: z.string(),
-      descrizione: z.string(),
+      descrizione: testo,
       sito: z.url(),
       repository: z.url(),
       design: z.url(),
@@ -27,18 +30,18 @@ const progetti = defineCollection({
         textMuted: colore,
         canvas: colore,
       }),
-      home: z.object({ messaggio: z.string().optional(), prodotto: z.string() }),
+      home: z.object({ messaggio: testo.optional(), prodotto: z.string() }),
       logo: image(),
       logoConNome: z.boolean().default(false),
-      panoramica: z.object({ titolo: z.string(), testo: z.string(), stack: z.string() }),
+      panoramica: z.object({ titolo: testo, testo: testo, stack: z.string() }),
       interfaccia: z.object({
-        desktop: z.object({ immagine: image(), didascalia: z.string(), story: storyId.optional() }),
-        mobile: z.object({ immagine: image(), didascalia: z.string(), story: storyId.optional() }),
+        desktop: z.object({ immagine: image(), didascalia: testo, story: storyId.optional() }),
+        mobile: z.object({ immagine: image(), didascalia: testo, story: storyId.optional() }),
       }),
-      tipografia: z.object({ font: z.string(), nota: z.string(), story: storyId, campione: image().optional() }),
-      palette: z.object({ nome: z.string(), nota: z.string(), story: storyId }),
+      tipografia: z.object({ font: z.string(), nota: testo, story: storyId, campione: image().optional() }),
+      palette: z.object({ nome: testo, nota: testo, story: storyId }),
       componenti: z
-        .array(z.object({ nome: z.string(), story: storyId, altezza: z.number().int().min(160).max(640) }))
+        .array(z.object({ nome: testo, story: storyId, altezza: z.number().int().min(160).max(640) }))
         .min(1),
     }),
 });

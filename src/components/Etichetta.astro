@@ -1,6 +1,7 @@
 ---
 // La P resta ferma, il resto della parola ruota. La prima è quella vera del titolo, le altre sono solo decorative.
-const parole = ["Portfolio", "Progetti", "Paolo", "Prototipi", "Percorso"];
+import { i18n, parole as tutte } from "../i18n";
+const parole = tutte[i18n(Astro.params).l];
 const [prima] = parole;
 ---
 

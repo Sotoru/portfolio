@@ -1,16 +1,23 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "../layouts/Layout.astro";
-import Profilo from "../components/Profilo.astro";
-import CardProgetto from "../components/CardProgetto.astro";
-import Etichetta from "../components/Etichetta.astro";
-import SelettoreTema from "../components/SelettoreTema.astro";
+import Layout from "../../layouts/Layout.astro";
+import Profilo from "../../components/Profilo.astro";
+import CardProgetto from "../../components/CardProgetto.astro";
+import Etichetta from "../../components/Etichetta.astro";
+import SelettoreTema from "../../components/SelettoreTema.astro";
 
+import { i18n, lingueEstere } from "../../i18n";
+
+export function getStaticPaths() {
+  return [{ params: { lang: undefined } }, ...lingueEstere.map((lang) => ({ params: { lang } }))];
+}
+
+const { t } = i18n(Astro.params);
 const progetti = (await getCollection("progetti")).sort((a, b) => a.data.ordine - b.data.ordine);
 const [primo, ...altri] = progetti;
 ---
 
-<Layout title="Paolo Laddomada · Portfolio" description="Portfolio di Paolo Laddomada, Front End Developer.">
+<Layout title={t("homeTitolo")} description={t("homeDescrizione")}>
   <div class="mx-auto flex max-w-[calc(var(--content-max)_+_2*var(--page-x))] flex-col gap-(--page-gap) px-(--page-x) pt-(--page-top)">
     <header class="flex h-16 items-center justify-between gap-4">
       <Etichetta />

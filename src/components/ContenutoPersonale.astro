@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { Sezione } from "../data/personale";
+import { i18n, tr } from "../i18n";
 import Carosello from "./Carosello.astro";
 import Timeline from "./Timeline.astro";
 
@@ -8,15 +9,16 @@ interface Props {
   sezioni: Sezione[];
 }
 const { sezioni } = Astro.props;
+const { l } = i18n(Astro.params);
 ---
 
 {
   sezioni.map((sezione) =>
     sezione.titoli ? (
-      <Carosello titolo={sezione.titolo} titoli={sezione.titoli} quadrate={sezione.quadrate} />
+      <Carosello titolo={tr(sezione.titolo, l)} titoli={sezione.titoli} quadrate={sezione.quadrate} />
     ) : (
       <section class="flex flex-col gap-4">
-        {sezioni.length > 1 && <h3 class="text-eyebrow border-b border-current/15 pb-3 opacity-80">{sezione.titolo}</h3>}
+        {sezioni.length > 1 && <h3 class="text-eyebrow border-b border-current/15 pb-3 opacity-80">{tr(sezione.titolo, l)}</h3>}
         {sezione.timeline && <Timeline voci={sezione.timeline} anniVuoti={sezione.anniVuoti} />}
         {sezione.voci.length > 0 && (
           <ul class="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -25,7 +27,7 @@ const { sezioni } = Astro.props;
                 <span class="flex size-11 items-center justify-center rounded-2xl bg-current/10">
                   <Icon name={voce.icona} aria-hidden="true" class="icona size-6" />
                 </span>
-                <span class="text-ui">{voce.cosa}</span>
+                <span class="text-ui">{tr(voce.cosa, l)}</span>
               </li>
             ))}
           </ul>

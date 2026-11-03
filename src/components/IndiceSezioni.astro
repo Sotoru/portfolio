@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+import { i18n } from "../i18n";
 
 interface Props {
   sezioni: readonly { id: string; nome: string }[];
@@ -9,12 +10,13 @@ interface Props {
   testata: string;
 }
 const { sezioni, indietro, testata } = Astro.props;
+const { t } = i18n(Astro.params);
 ---
 
-<nav data-reveal aria-label="Sezioni del progetto" data-testata={testata} class="riga-sezioni sticky top-0 z-20 bg-primary py-4">
+<nav data-reveal aria-label={t("sezioniProgetto")} data-testata={testata} class="riga-sezioni sticky top-0 z-20 bg-primary py-4">
   <a
     href={indietro}
-    aria-label="Torna indietro"
+    aria-label={t("tornaIndietro")}
     inert
     class="indietro absolute top-4 left-(--inner-x) z-10 flex size-12 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--primary),white_8%)] text-on-primary hover:bg-[color-mix(in_srgb,var(--primary),white_14%)]"
   >

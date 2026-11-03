@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 import Lettering from "./Lettering.astro";
+import { i18n, indirizzo, tr } from "../i18n";
 import CardBlog from "../assets/progetti/pedagogicpoint/card.svg";
 import CardCarte from "../assets/progetti/ygo-tracker/card.svg";
 
@@ -11,11 +12,12 @@ interface Props {
 }
 const { progetto, grande = false } = Astro.props;
 const { id, data } = progetto;
+const { l } = i18n(Astro.params);
 ---
 
 <a
   id={id}
-  href={`/${id}/`}
+  href={indirizzo(l, `${id}/`)}
   class:list={[
     "group relative flex min-h-[300px] flex-col overflow-hidden rounded-(--frame-radius) bg-brand-top text-on-brand outline-offset-4",
     grande ? "min-h-[440px] lg:min-h-0" : "lg:min-h-[312px]",
@@ -24,7 +26,7 @@ const { id, data } = progetto;
 >
   <div class="relative h-(--linea) shrink-0">
     <Lettering
-      testo={data.titolo}
+      testo={tr(data.titolo, l)}
       sopra="var(--color-brand)"
       sotto="var(--color-brand-top)"
       class:list={["bottom-0 text-(length:--titolo)", grande ? "left-(--blog-left)" : "left-6"]}
@@ -36,7 +38,7 @@ const { id, data } = progetto;
         <>
           {/* Sopra il foglio, con un contorno del colore della card: quando il foglio sale in hover il testo resta pulito. */}
           <p class="messaggio font-display relative z-10 mt-(--msg-top) ml-(--msg-x) self-start text-(length:--msg) leading-(--msg-lh) font-bold tracking-[-0.04em] whitespace-pre-line">
-            {data.home.messaggio}
+            {data.home.messaggio && tr(data.home.messaggio, l)}
           </p>
           <CardBlog
             aria-hidden="true"

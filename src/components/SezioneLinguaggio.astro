@@ -4,6 +4,7 @@ import { Icon } from "astro-icon/components";
 import Aa from "../assets/progetti/pedagogicpoint/aa.svg";
 import type { CollectionEntry } from "astro:content";
 import { storyUrl } from "../lib/storybook";
+import { i18n, tr } from "../i18n";
 
 interface Props {
   progetto: CollectionEntry<"progetti">;
@@ -11,37 +12,38 @@ interface Props {
 }
 const { progetto, pubblico } = Astro.props;
 const { data } = progetto;
+const { l, t } = i18n(Astro.params);
 ---
 
 <div class="grid gap-6 md:grid-cols-2">
   <div class="flex flex-col gap-4 rounded-(--card-radius) bg-secondary p-(--card-pad) text-ink">
-    <p class="text-eyebrow text-muted">Tipografia</p>
+    <p class="text-eyebrow text-muted">{t("tipografia")}</p>
     {data.tipografia.campione ? (
       <Aa aria-hidden="true" class="h-[72px] w-auto self-start text-on-secondary" />
     ) : (
       <p aria-hidden="true" class="font-[system-ui] text-[64px] leading-[72px] font-semibold tracking-[-1px] text-on-secondary">Aa</p>
     )}
     <h3 class="text-h3">{data.tipografia.font}</h3>
-    <p class="text-caption text-muted">{data.tipografia.nota}</p>
+    <p class="text-caption text-muted">{tr(data.tipografia.nota, l)}</p>
     {pubblico && (
       <a href={storyUrl(data.storybook, data.tipografia.story)} class="text-ui inline-flex min-h-6 items-center gap-1 self-start text-on-secondary hover:underline">
-        Tipografia in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
+        {t("tipografiaSb")} <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
       </a>
     )}
   </div>
   <div class="flex flex-col gap-4 rounded-(--card-radius) bg-secondary p-(--card-pad) text-ink">
-    <p class="text-eyebrow text-muted">Palette</p>
+    <p class="text-eyebrow text-muted">{t("palette")}</p>
     <div class="flex h-[72px] gap-2" aria-hidden="true">
       {/* Campioni del brand: restano i colori chiari del progetto anche in tema scuro. */}
       {[data.colori.primary, data.colori.canvas, data.colori.textPrimary].map((colore) => (
         <span class="flex-1 rounded-xl ring-1 ring-ink/10 ring-inset" style={`background:${colore}`} />
       ))}
     </div>
-    <h3 class="text-h3">{data.palette.nome}</h3>
-    <p class="text-caption text-muted">{data.palette.nota}</p>
+    <h3 class="text-h3">{tr(data.palette.nome, l)}</h3>
+    <p class="text-caption text-muted">{tr(data.palette.nota, l)}</p>
     {pubblico && (
       <a href={storyUrl(data.storybook, data.palette.story)} class="text-ui inline-flex min-h-6 items-center gap-1 self-start text-on-secondary hover:underline">
-        Colori in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
+        {t("coloriSb")} <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
       </a>
     )}
   </div>

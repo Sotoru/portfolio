@@ -2,25 +2,41 @@
 import { Font } from "astro:assets";
 import "../styles/global.css";
 import Footer from "../components/Footer.astro";
+import { i18n, indirizzo, lingue } from "../i18n";
 
 interface Props {
   title: string;
   description: string;
+  /** Resto del percorso della pagina, uguale in tutte le lingue (es. "pedagogicpoint/"). */
+  pagina?: string;
   /** Variabili di tema della pagina (es. il progetto): applicate a <body>, così anche footer e bordi le ereditano. */
   fondo?: string;
 }
-const { title, description, fondo } = Astro.props;
+const { title, description, fondo, pagina = "" } = Astro.props;
+const { l } = i18n(Astro.params);
 // I social vogliono un URL assoluto: serve `site` in astro.config, altrimenti resta relativo.
 const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
 ---
 
 <!doctype html>
-<html lang="it">
+<html lang={l}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#EFF2FB" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#050A14" media="(prefers-color-scheme: dark)" />
+    <script is:inline define:vars={{ lingue, l, pagina }}>
+      // Prima visita su una pagina italiana: se il browser preferisce un'altra lingua del sito, si va lì.
+      // Una scelta fatta dal selettore (salvata in "lingua") vince sempre; i crawler senza localStorage restano sull'italiano.
+      try {
+        const scelta = localStorage.getItem("lingua");
+        const voluta = scelta ?? navigator.languages.map((x) => x.slice(0, 2)).find((x) => lingue.includes(x));
+        if (l === "it" && voluta && voluta !== "it" && lingue.includes(voluta)) {
+          if (!scelta) localStorage.setItem("lingua", voluta);
+          location.replace(`/${voluta}/${pagina}${location.hash}`);
+        }
+      } catch {}
+    </script>
     <script is:inline>
       // Prima del primo disegno: applica il tema scelto in home, così non c'è un lampo del tema di sistema.
       try {
@@ -36,6 +52,8 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
+    {lingue.map((x) => <link rel="alternate" hreflang={x} href={indirizzo(x, pagina)} />)}
+    <link rel="alternate" hreflang="x-default" href={indirizzo("it", pagina)} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -58,7 +76,7 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
   </head>
   <body class="bg-(--fondo,var(--color-canvas))" style={fondo}>
     <slot />
-    <Footer />
+    <Footer pagina={pagina} />
     <script>
       import "../scripts/reveal";
     </script>

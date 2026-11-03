@@ -4,7 +4,8 @@ import icon from "astro-icon";
 
 export default defineConfig({
   integrations: [icon()],
-  redirects: { "/progetti": "/", "/progetti/[slug]": "/[slug]" },
+  // /progetti/:slug → /:slug resta in vercel.json: con le pagine sotto [...lang] Astro non lo può generare.
+  redirects: { "/progetti": "/" },
   fonts: [
     {
       provider: fontProviders.fontsource(),

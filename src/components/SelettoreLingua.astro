@@ -1,0 +1,47 @@
+---
+import { Icon } from "astro-icon/components";
+import { i18n, indirizzo, lingue, nomiLingue } from "../i18n";
+
+interface Props {
+  /** Resto del percorso della pagina corrente, uguale in tutte le lingue. */
+  pagina: string;
+}
+const { pagina } = Astro.props;
+const { l, t } = i18n(Astro.params);
+---
+
+<!-- Link veri, non un menu a tendina: ogni lingua è un indirizzo, così funziona anche senza JavaScript. -->
+<nav aria-label={t("lingua")} class="lingue flex items-center gap-1.5">
+  <Icon name="ph:translate" aria-hidden="true" class="size-4 opacity-80" />
+  <ul class="flex flex-wrap items-center justify-center">
+    {
+      lingue.map((x) => (
+        <li>
+          <a
+            href={indirizzo(x, pagina)}
+            hreflang={x}
+            lang={x}
+            data-lingua={x}
+            aria-current={x === l ? "page" : undefined}
+            title={nomiLingue[x]}
+            class="inline-flex min-h-6 min-w-8 items-center justify-center rounded-lg px-1.5 font-semibold uppercase underline-offset-2 opacity-80 hover:underline aria-[current=page]:bg-current/10 aria-[current=page]:opacity-100 aria-[current=page]:no-underline"
+          >
+            <span aria-hidden="true">{x}</span>
+            <span class="sr-only">{nomiLingue[x]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  // La scelta esplicita vince sulla lingua del browser alle visite successive.
+  document.querySelectorAll<HTMLAnchorElement>(".lingue [data-lingua]").forEach((a) =>
+    a.addEventListener("click", () => {
+      try {
+        localStorage.setItem("lingua", a.dataset.lingua!);
+      } catch {}
+    }),
+  );
+</script>

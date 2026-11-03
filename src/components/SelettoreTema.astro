@@ -1,10 +1,12 @@
 ---
 import { Icon } from "astro-icon/components";
 
+import { i18n } from "../i18n";
+const { t } = i18n(Astro.params);
 const scelte = [
-  { valore: "chiaro", nome: "Tema chiaro", icona: "ph:sun" },
-  { valore: "sistema", nome: "Tema di sistema", icona: "ph:monitor" },
-  { valore: "scuro", nome: "Tema scuro", icona: "ph:moon" },
+  { valore: "chiaro", nome: t("temaChiaro"), icona: "ph:sun" },
+  { valore: "sistema", nome: t("temaSistema"), icona: "ph:monitor" },
+  { valore: "scuro", nome: t("temaScuro"), icona: "ph:moon" },
 ];
 ---
 
@@ -14,7 +16,7 @@ const scelte = [
 -->
 <div
   role="radiogroup"
-  aria-label="Tema"
+  aria-label={t("tema")}
   class="selettore-tema flex shrink-0 items-center rounded-full border border-brand-surface p-0.5 text-brand-ink"
 >
   {

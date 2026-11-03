@@ -1,6 +1,8 @@
 ---
 import Avatar from "../assets/home/avatar.svg";
 import { Icon } from "astro-icon/components";
+import { i18n } from "../i18n";
+const { t } = i18n(Astro.params);
 
 const social = [
   { nome: "Instagram", icona: "ph:instagram-logo", href: "https://www.instagram.com/ladd_xxvi/" },
@@ -29,13 +31,13 @@ const social = [
       paolo.laddomada26@gmail.com
       <Icon name="ph:copy" aria-hidden="true" class="size-3.5 shrink-0" />
     </a>
-    <span class="copiata pointer-events-none font-semibold opacity-0 transition-opacity duration-200" role="status"></span>
+    <span class="copiata pointer-events-none font-semibold opacity-0 transition-opacity duration-200" role="status" data-testo={t("copiata")}></span>
   </p>
   <ul class="mt-auto -ml-2 flex gap-2">
     {
       social.map((s) => (
         <li>
-          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.nome} (si apre in una nuova scheda)`} class="flex size-12 items-center justify-center rounded-2xl hover:bg-white/14">
+          <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.nome} ${t("nuovaScheda")}`} class="flex size-12 items-center justify-center rounded-2xl hover:bg-white/14">
             <Icon name={s.icona} size={32} aria-hidden="true" />
           </a>
         </li>
@@ -51,7 +53,7 @@ const social = [
   email.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(email.href.replace("mailto:", ""));
-      stato.textContent = "Copiata";
+      stato.textContent = stato.dataset.testo!;
     } catch {
       return;
     }

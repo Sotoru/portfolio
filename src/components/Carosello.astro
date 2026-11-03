@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import type { Titolo } from "../data/personale";
+import { i18n, tr } from "../i18n";
 
 interface Props {
   titolo: string;
@@ -9,40 +10,41 @@ interface Props {
   quadrate?: boolean;
 }
 const { titolo, titoli, quadrate } = Astro.props;
+const { l, t } = i18n(Astro.params);
 // Tre copie: si parte da quella centrale e, a fine scorrimento, si salta di una copia. Il salto non si vede perché le copie sono identiche.
 const copie = [0, 1, 2];
 ---
 
-<section class="carosello flex flex-col gap-2" aria-roledescription="carosello" aria-label={titolo}>
+<section class="carosello flex flex-col gap-2" aria-roledescription={t("carosello")} aria-label={titolo}>
   <div class="flex items-center justify-between gap-4">
     <h3 class="text-eyebrow opacity-70">{titolo}</h3>
     <div class="flex gap-1.5">
-      <button type="button" data-passo="-1" aria-label={`${titolo}: precedenti`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
+      <button type="button" data-passo="-1" aria-label={`${titolo}: ${t("precedenti")}`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
         <Icon name="ph:caret-left" aria-hidden="true" class="size-4" />
       </button>
-      <button type="button" data-passo="1" aria-label={`${titolo}: successivi`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
+      <button type="button" data-passo="1" aria-label={`${titolo}: ${t("successivi")}`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
         <Icon name="ph:caret-right" aria-hidden="true" class="size-4" />
       </button>
     </div>
   </div>
-  <ul tabindex="0" aria-label={`${titolo}: titoli`} class="riga no-scrollbar rounded-2xl focus-visible:outline-offset-[-3px] -mx-(--card-pad) flex snap-x snap-mandatory scroll-px-(--card-pad) gap-4 overflow-x-auto overscroll-x-contain px-(--card-pad) pt-2 pb-4 md:-mx-12 md:scroll-px-12 md:px-12">
+  <ul tabindex="0" aria-label={`${titolo}: ${t("titoli")}`} class="riga no-scrollbar rounded-2xl focus-visible:outline-offset-[-3px] -mx-(--card-pad) flex snap-x snap-mandatory scroll-px-(--card-pad) gap-4 overflow-x-auto overscroll-x-contain px-(--card-pad) pt-2 pb-4 md:-mx-12 md:scroll-px-12 md:px-12">
     {
       copie.map((copia) =>
-        titoli.map((t) => (
+        titoli.map((v) => (
           <li
             class:list={["carta flex shrink-0 snap-start flex-col gap-2", quadrate ? "w-[225px] md:w-[270px]" : "w-[150px] md:w-[180px]"]}
             aria-hidden={copia === 1 ? undefined : "true"}
             inert={copia !== 1}
           >
             <Image
-              src={t.copertina}
-              alt={copia === 1 ? `Copertina di ${t.nome}` : ""}
+              src={v.copertina}
+              alt={copia === 1 ? `${t("copertinaDi")} ${tr(v.nome, l)}` : ""}
               widths={[270, 540]}
               sizes="270px"
               class="attenua h-[225px] w-full rounded-2xl bg-current/7 object-cover md:h-[270px]"
             />
-            <span class="line-clamp-2 text-[14px] leading-5 font-semibold">{t.nome}</span>
-            <span class="text-caption -mt-1 opacity-70">{t.autore}</span>
+            <span class="line-clamp-2 text-[14px] leading-5 font-semibold">{tr(v.nome, l)}</span>
+            <span class="text-caption -mt-1 opacity-70">{v.autore}</span>
           </li>
         )),
       )

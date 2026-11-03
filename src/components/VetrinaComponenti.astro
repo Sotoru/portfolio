@@ -2,6 +2,7 @@
 import { Icon } from "astro-icon/components";
 import type { CollectionEntry } from "astro:content";
 import { storyIframe, storyUrl } from "../lib/storybook";
+import { i18n, tr } from "../i18n";
 
 interface Props {
   progetto: CollectionEntry<"progetti">;
@@ -10,12 +11,13 @@ interface Props {
 const { progetto, pubblico } = Astro.props;
 const { componenti, storybook } = progetto.data;
 const [primo] = componenti;
+const { l, t } = i18n(Astro.params);
 ---
 
 <div class="vetrina grid overflow-hidden rounded-(--card-radius) bg-paper text-ink md:grid-cols-[220px_1fr]">
   <div
     role="tablist"
-    aria-label="Componenti"
+    aria-label={t("componenti")}
     aria-orientation="vertical"
     class="no-scrollbar flex gap-1 overflow-x-auto overscroll-x-contain border-b border-ink/10 p-2 md:flex-col md:overflow-visible md:border-r md:border-b-0"
   >
@@ -33,7 +35,7 @@ const [primo] = componenti;
           data-altezza={c.altezza}
           class="text-ui flex h-11 shrink-0 items-center rounded-xl px-4 text-left whitespace-nowrap text-muted hover:bg-secondary/60 hover:text-ink aria-selected:bg-secondary aria-selected:text-on-secondary"
         >
-          {c.nome}
+          {tr(c.nome, l)}
         </button>
       ))
     }
@@ -46,29 +48,29 @@ const [primo] = componenti;
           <>
             <iframe
               data-src={storyIframe(storybook, primo.story)}
-              title={`Storybook · ${primo.nome}`}
+              title={`Storybook · ${tr(primo.nome, l)}`}
               class="absolute inset-0 size-full border-0 opacity-0 transition-opacity duration-200"
             />
             <span class="carica text-caption pointer-events-none absolute inset-0 flex items-center justify-center text-muted transition-opacity duration-200">
-              Caricamento…
+              {t("caricamento")}
             </span>
           </>
         ) : (
           <p class="text-caption absolute inset-0 flex items-center justify-center p-6 text-center text-muted">
-            Storybook in arrivo: le story saranno provabili qui.
+            {t("sbInArrivo")}
           </p>
         )
       }
     </div>
     <div class="flex flex-col items-start justify-between gap-3 p-4 sm:flex-row sm:items-center sm:gap-4">
-      <p class="text-caption text-muted">{pubblico ? "Interagisci con il componente o aprilo in Storybook." : "Anteprima non ancora disponibile."}</p>
+      <p class="text-caption text-muted">{pubblico ? t("interagisci") : t("anteprimaNo")}</p>
       {
         pubblico && (
           <a
             href={storyUrl(storybook, primo.story)}
             class="apri text-ui flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-secondary px-4 text-on-secondary hover:brightness-95"
           >
-            Apri la story <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
+            {t("apriStory")} <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
           </a>
         )
       }

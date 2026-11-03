@@ -2,9 +2,21 @@
   {
     "id": "pedagogicpoint",
     "ordine": 1,
-    "titolo": "Blog",
+    "titolo": {
+      "it": "Blog",
+      "en": "Blog",
+      "es": "Blog",
+      "fr": "Blog",
+      "de": "Blog"
+    },
     "nome": "PedagogicPoint",
-    "descrizione": "Articoli e riflessioni sulla pedagogia.",
+    "descrizione": {
+      "it": "Articoli e riflessioni sulla pedagogia.",
+      "en": "Articles and reflections on pedagogy.",
+      "es": "Artículos y reflexiones sobre pedagogía.",
+      "fr": "Articles et réflexions sur la pédagogie.",
+      "de": "Artikel und Gedanken zur Pädagogik."
+    },
     "sito": "https://pedagogicpoint.vercel.app",
     "repository": "https://github.com/Sotoru/Pedagogic-Point",
     "design": "https://github.com/Sotoru/Pedagogic-Point/blob/main/docs/design.md",
@@ -30,34 +42,174 @@
       "attivo": "#FFFFFF",
       "onAttivo": "#1A1C20"
     },
-    "home": { "messaggio": "Spazio\nalle idee.", "prodotto": "PedagogicPoint" },
+    "home": {
+      "messaggio": {
+        "it": "Spazio\nalle idee.",
+        "en": "Room\nfor ideas.",
+        "es": "Espacio\npara ideas.",
+        "fr": "Place\naux idées.",
+        "de": "Raum\nfür Ideen."
+      },
+      "prodotto": "PedagogicPoint"
+    },
     "logo": "../assets/progetti/pedagogicpoint/logo.svg",
     "panoramica": {
-      "titolo": "Il contenuto, prima di tutto.",
-      "testo": "Un progetto editoriale dedicato alla pedagogia. Articoli, categorie tematiche e Perle Pedagogiche costruiscono un’esperienza di lettura essenziale.",
+      "titolo": {
+        "it": "Il contenuto, prima di tutto.",
+        "en": "Content comes first.",
+        "es": "El contenido, ante todo.",
+        "fr": "Le contenu avant tout.",
+        "de": "Der Inhalt zuerst."
+      },
+      "testo": {
+        "it": "Un progetto editoriale dedicato alla pedagogia. Articoli, categorie tematiche e Perle Pedagogiche costruiscono un’esperienza di lettura essenziale.",
+        "en": "An editorial project about pedagogy. Articles, themed categories and Perle Pedagogiche (pedagogical gems) make for a focused reading experience.",
+        "es": "Un proyecto editorial dedicado a la pedagogía. Artículos, categorías temáticas y Perle Pedagogiche (perlas pedagógicas) construyen una experiencia de lectura esencial.",
+        "fr": "Un projet éditorial consacré à la pédagogie. Articles, catégories thématiques et Perle Pedagogiche (perles pédagogiques) composent une expérience de lecture épurée.",
+        "de": "Ein redaktionelles Projekt rund um Pädagogik. Artikel, thematische Kategorien und Perle Pedagogiche (pädagogische Perlen) schaffen ein reduziertes Leseerlebnis."
+      },
       "stack": "Next.js · React · TypeScript · Panda CSS"
     },
     "interfaccia": {
-      "desktop": { "immagine": "../assets/progetti/pedagogicpoint/home-desktop.png", "didascalia": "Home / Desktop", "story": "schermate-home--default" },
-      "mobile": { "immagine": "../assets/progetti/pedagogicpoint/articolo-mobile.png", "didascalia": "Articolo / Mobile", "story": "schermate-articolo--default" }
+      "desktop": {
+        "immagine": "../assets/progetti/pedagogicpoint/home-desktop.png",
+        "didascalia": {
+          "it": "Home / Desktop",
+          "en": "Home / Desktop",
+          "es": "Inicio / Escritorio",
+          "fr": "Accueil / Ordinateur",
+          "de": "Startseite / Desktop"
+        },
+        "story": "schermate-home--default"
+      },
+      "mobile": {
+        "immagine": "../assets/progetti/pedagogicpoint/articolo-mobile.png",
+        "didascalia": {
+          "it": "Articolo / Mobile",
+          "en": "Article / Mobile",
+          "es": "Artículo / Móvil",
+          "fr": "Article / Mobile",
+          "de": "Artikel / Mobil"
+        },
+        "story": "schermate-articolo--default"
+      }
     },
-    "tipografia": { "font": "Montserrat + Inter", "nota": "Great Vibes + Montez per il wordmark.", "story": "fondamenti-tipografia--light", "campione": "../assets/progetti/pedagogicpoint/aa.svg" },
-    "palette": { "nome": "Neutri editoriali", "nota": "Primary #141414 · Accento #0059BB", "story": "fondamenti-colori--light" },
+    "tipografia": {
+      "font": "Montserrat + Inter",
+      "nota": {
+        "it": "Great Vibes + Montez per il wordmark.",
+        "en": "Great Vibes + Montez for the wordmark.",
+        "es": "Great Vibes + Montez para el logotipo.",
+        "fr": "Great Vibes + Montez pour le logotype.",
+        "de": "Great Vibes + Montez für die Wortmarke."
+      },
+      "story": "fondamenti-tipografia--light",
+      "campione": "../assets/progetti/pedagogicpoint/aa.svg"
+    },
+    "palette": {
+      "nome": {
+        "it": "Neutri editoriali",
+        "en": "Editorial neutrals",
+        "es": "Neutros editoriales",
+        "fr": "Neutres éditoriaux",
+        "de": "Redaktionelle Neutraltöne"
+      },
+      "nota": {
+        "it": "Primary #141414 · Accento #0059BB",
+        "en": "Primary #141414 · Accent #0059BB",
+        "es": "Primario #141414 · Acento #0059BB",
+        "fr": "Primaire #141414 · Accent #0059BB",
+        "de": "Primär #141414 · Akzent #0059BB"
+      },
+      "story": "fondamenti-colori--light"
+    },
     "componenti": [
-      { "nome": "Perla Pedagogica", "story": "componenti-perla-pedagogica--breve", "altezza": 440 },
-      { "nome": "Scheda articolo", "story": "componenti-articoli-scheda-articolo--default", "altezza": 620 },
-      { "nome": "Pulsante", "story": "ui-pulsante--outline", "altezza": 200 },
-      { "nome": "Filtro categoria", "story": "ui-filtro-categoria--tutte", "altezza": 360 },
-      { "nome": "Selettore tema", "story": "ui-selettore-tema--default", "altezza": 200 },
-      { "nome": "Etichetta categoria", "story": "ui-etichetta-categoria--tutte-le-categorie", "altezza": 200 }
+      {
+        "nome": {
+          "it": "Perla Pedagogica",
+          "en": "Pedagogical gem",
+          "es": "Perla pedagógica",
+          "fr": "Perle pédagogique",
+          "de": "Pädagogische Perle"
+        },
+        "story": "componenti-perla-pedagogica--breve",
+        "altezza": 440
+      },
+      {
+        "nome": {
+          "it": "Scheda articolo",
+          "en": "Article card",
+          "es": "Tarjeta de artículo",
+          "fr": "Fiche article",
+          "de": "Artikelkarte"
+        },
+        "story": "componenti-articoli-scheda-articolo--default",
+        "altezza": 620
+      },
+      {
+        "nome": {
+          "it": "Pulsante",
+          "en": "Button",
+          "es": "Botón",
+          "fr": "Bouton",
+          "de": "Schaltfläche"
+        },
+        "story": "ui-pulsante--outline",
+        "altezza": 200
+      },
+      {
+        "nome": {
+          "it": "Filtro categoria",
+          "en": "Category filter",
+          "es": "Filtro de categoría",
+          "fr": "Filtre par catégorie",
+          "de": "Kategoriefilter"
+        },
+        "story": "ui-filtro-categoria--tutte",
+        "altezza": 360
+      },
+      {
+        "nome": {
+          "it": "Selettore tema",
+          "en": "Theme switcher",
+          "es": "Selector de tema",
+          "fr": "Sélecteur de thème",
+          "de": "Designauswahl"
+        },
+        "story": "ui-selettore-tema--default",
+        "altezza": 200
+      },
+      {
+        "nome": {
+          "it": "Etichetta categoria",
+          "en": "Category tag",
+          "es": "Etiqueta de categoría",
+          "fr": "Étiquette de catégorie",
+          "de": "Kategorie-Tag"
+        },
+        "story": "ui-etichetta-categoria--tutte-le-categorie",
+        "altezza": 200
+      }
     ]
   },
   {
     "id": "ygo-tracker",
     "ordine": 2,
-    "titolo": "Carte",
+    "titolo": {
+      "it": "Carte",
+      "en": "Cards",
+      "es": "Cartas",
+      "fr": "Cartes",
+      "de": "Karten"
+    },
     "nome": "YGO Tracker",
-    "descrizione": "Deck, Wishlist e tornei di Yu-Gi-Oh!.",
+    "descrizione": {
+      "it": "Deck, Wishlist e tornei di Yu-Gi-Oh!.",
+      "en": "Yu-Gi-Oh! decks, wishlists and tournaments.",
+      "es": "Mazos, listas de deseos y torneos de Yu-Gi-Oh!.",
+      "fr": "Decks, listes de souhaits et tournois Yu-Gi-Oh!.",
+      "de": "Yu-Gi-Oh!-Decks, Wunschlisten und Turniere."
+    },
     "sito": "https://ygo-tracker-sotorus-projects.vercel.app",
     "repository": "https://github.com/Sotoru/ygo-tracker-web",
     "design": "https://github.com/Sotoru/ygo-tracker-web/blob/main/DESIGN.md",
@@ -83,27 +235,146 @@
       "attivo": "#B6A2EB",
       "onAttivo": "#1F192E"
     },
-    "home": { "prodotto": "Ygo Tracker Web" },
+    "home": {
+      "prodotto": "Ygo Tracker Web"
+    },
     "logo": "../assets/progetti/ygo-tracker/logo.svg",
     "logoConNome": true,
     "panoramica": {
-      "titolo": "Ogni carta al suo posto.",
-      "testo": "Una web app per organizzare Deck e Wishlist e consultare i tornei. Ricerca, quantità e varianti tengono vicine le informazioni e le azioni utili.",
+      "titolo": {
+        "it": "Ogni carta al suo posto.",
+        "en": "Every card in its place.",
+        "es": "Cada carta en su sitio.",
+        "fr": "Chaque carte à sa place.",
+        "de": "Jede Karte an ihrem Platz."
+      },
+      "testo": {
+        "it": "Una web app per organizzare Deck e Wishlist e consultare i tornei. Ricerca, quantità e varianti tengono vicine le informazioni e le azioni utili.",
+        "en": "A web app to organise decks and wishlists and browse tournaments. Search, quantities and variants keep information and useful actions close together.",
+        "es": "Una web app para organizar mazos y listas de deseos y consultar los torneos. Búsqueda, cantidades y variantes mantienen cerca la información y las acciones útiles.",
+        "fr": "Une web app pour organiser decks et listes de souhaits et consulter les tournois. Recherche, quantités et variantes gardent à portée de main informations et actions utiles.",
+        "de": "Eine Web-App, um Decks und Wunschlisten zu organisieren und Turniere einzusehen. Suche, Mengen und Varianten halten Informationen und nützliche Aktionen nah beieinander."
+      },
       "stack": "SvelteKit · Svelte 5 · TypeScript · Panda CSS"
     },
     "interfaccia": {
-      "desktop": { "immagine": "../assets/progetti/ygo-tracker/deck-desktop.png", "didascalia": "Deck / Desktop" },
-      "mobile": { "immagine": "../assets/progetti/ygo-tracker/deck-lista-mobile.png", "didascalia": "Lista Deck / Mobile", "story": "schermate-deck-lista--covers-resolved" }
+      "desktop": {
+        "immagine": "../assets/progetti/ygo-tracker/deck-desktop.png",
+        "didascalia": {
+          "it": "Deck / Desktop",
+          "en": "Deck / Desktop",
+          "es": "Mazo / Escritorio",
+          "fr": "Deck / Ordinateur",
+          "de": "Deck / Desktop"
+        }
+      },
+      "mobile": {
+        "immagine": "../assets/progetti/ygo-tracker/deck-lista-mobile.png",
+        "didascalia": {
+          "it": "Lista Deck / Mobile",
+          "en": "Deck list / Mobile",
+          "es": "Lista de mazos / Móvil",
+          "fr": "Liste des decks / Mobile",
+          "de": "Deckliste / Mobil"
+        },
+        "story": "schermate-deck-lista--covers-resolved"
+      }
     },
-    "tipografia": { "font": "System UI", "nota": "Carattere di sistema del dispositivo.", "story": "fondamenti-token--typography" },
-    "palette": { "nome": "Blu monocromatico", "nota": "Primary #2459BA · Brand #6750A4", "story": "fondamenti-token--surfaces" },
+    "tipografia": {
+      "font": "System UI",
+      "nota": {
+        "it": "Carattere di sistema del dispositivo.",
+        "en": "The device’s system typeface.",
+        "es": "Tipografía del sistema del dispositivo.",
+        "fr": "Police système de l’appareil.",
+        "de": "Systemschrift des Geräts."
+      },
+      "story": "fondamenti-token--typography"
+    },
+    "palette": {
+      "nome": {
+        "it": "Blu monocromatico",
+        "en": "Monochrome blue",
+        "es": "Azul monocromático",
+        "fr": "Bleu monochrome",
+        "de": "Monochromes Blau"
+      },
+      "nota": {
+        "it": "Primary #2459BA · Brand #6750A4",
+        "en": "Primary #2459BA · Brand #6750A4",
+        "es": "Primario #2459BA · Marca #6750A4",
+        "fr": "Primaire #2459BA · Marque #6750A4",
+        "de": "Primär #2459BA · Marke #6750A4"
+      },
+      "story": "fondamenti-token--surfaces"
+    },
     "componenti": [
-      { "nome": "Contatore copie", "story": "componenti-deck-contatore-copie--contatore", "altezza": 240 },
-      { "nome": "Scheda carta", "story": "componenti-carte-scheda-carta--cell", "altezza": 400 },
-      { "nome": "Anteprima Deck", "story": "componenti-deck-anteprima-deck--trio", "altezza": 420 },
-      { "nome": "Filtro format", "story": "componenti-navigazione-filtro-format--format-chips", "altezza": 200 },
-      { "nome": "Interruttore", "story": "ui-interruttore--switch", "altezza": 200 },
-      { "nome": "Finestra di conferma", "story": "ui-finestra-di-conferma--dialog", "altezza": 360 }
+      {
+        "nome": {
+          "it": "Contatore copie",
+          "en": "Copy counter",
+          "es": "Contador de copias",
+          "fr": "Compteur d’exemplaires",
+          "de": "Kopienzähler"
+        },
+        "story": "componenti-deck-contatore-copie--contatore",
+        "altezza": 240
+      },
+      {
+        "nome": {
+          "it": "Scheda carta",
+          "en": "Card tile",
+          "es": "Ficha de carta",
+          "fr": "Fiche de carte",
+          "de": "Kartenkachel"
+        },
+        "story": "componenti-carte-scheda-carta--cell",
+        "altezza": 400
+      },
+      {
+        "nome": {
+          "it": "Anteprima Deck",
+          "en": "Deck preview",
+          "es": "Vista previa del mazo",
+          "fr": "Aperçu du deck",
+          "de": "Deck-Vorschau"
+        },
+        "story": "componenti-deck-anteprima-deck--trio",
+        "altezza": 420
+      },
+      {
+        "nome": {
+          "it": "Filtro format",
+          "en": "Format filter",
+          "es": "Filtro de formato",
+          "fr": "Filtre de format",
+          "de": "Formatfilter"
+        },
+        "story": "componenti-navigazione-filtro-format--format-chips",
+        "altezza": 200
+      },
+      {
+        "nome": {
+          "it": "Interruttore",
+          "en": "Switch",
+          "es": "Interruptor",
+          "fr": "Interrupteur",
+          "de": "Schalter"
+        },
+        "story": "ui-interruttore--switch",
+        "altezza": 200
+      },
+      {
+        "nome": {
+          "it": "Finestra di conferma",
+          "en": "Confirmation dialog",
+          "es": "Diálogo de confirmación",
+          "fr": "Boîte de confirmation",
+          "de": "Bestätigungsdialog"
+        },
+        "story": "ui-finestra-di-conferma--dialog",
+        "altezza": 360
+      }
     ]
   }
 ]
