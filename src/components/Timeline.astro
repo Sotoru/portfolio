@@ -1,0 +1,159 @@
+---
+import { Icon } from "astro-icon/components";
+import type { VoceTimeline } from "../data/personale";
+
+interface Props {
+  voci: VoceTimeline[];
+  /** Mostra anche gli anni senza voci che iniziano o finiscono (piccoli). */
+  anniVuoti?: boolean;
+}
+const { voci, anniVuoti = false } = Astro.props;
+
+const fine = (v: VoceTimeline) => v.a ?? v.da;
+const ultimo = Math.max(...voci.map(fine));
+const primo = Math.min(...voci.map((v) => v.da));
+
+const finisconoNel = (anno: number) => voci.filter((v) => fine(v) === anno);
+const grande = (anno: number) => voci.some((v) => v.da === anno || fine(v) === anno);
+// Asse degli anni: una riga per anno, dal più recente; quelli senza voci solo se richiesti.
+const anni = Array.from({ length: ultimo - primo + 1 }, (_, i) => ultimo - i).filter((a) => anniVuoti || grande(a));
+const riga = (anno: number) => anni.indexOf(anno) + 1;
+
+/*
+ * Barre: una per ogni voce su più anni, dall'anno di fine a quello d'inizio; le voci di un solo anno
+ * condividono la barra del loro anno. Ognuna prende il primo binario libero; le barre sovrapposte vanno sul secondo.
+ */
+type Barra = { da: number; a: number; binario: number };
+const daPosare = [
+  ...anni.filter((y) => voci.some((v) => v.da === y && fine(v) === y)).map((y) => ({ da: y, a: y })),
+  ...voci.filter((v) => fine(v) > v.da).map((v) => ({ da: v.da, a: fine(v) })),
+].sort((x, y) => y.a - x.a || x.a - x.da - (y.a - y.da));
+const binari: Barra[][] = [];
+const barre: Barra[] = daPosare.map((b) => {
+  let binario = binari.findIndex((occupato) => occupato.every((o) => b.a < o.da || b.da > o.a));
+  if (binario === -1) binario = binari.push([]) - 1;
+  const barra = { ...b, binario };
+  binari[binario].push(barra);
+  return barra;
+});
+
+const periodo = (v: VoceTimeline) => (fine(v) > v.da ? `${v.da} — ${fine(v)} · ${fine(v) - v.da + 1} anni` : undefined);
+---
+
+<div class="timeline grid gap-x-3 gap-y-4 md:gap-x-4" style={`grid-template-columns:auto repeat(${binari.length},6px) minmax(0,1fr)`}>
+  {
+    anni.map((anno) => (
+      <span aria-hidden="true" class="col-start-1" style={`grid-row:${riga(anno)}`}>
+        <span
+          class:list={[
+            "anno block text-right font-display font-bold tracking-[-0.5px]",
+            grande(anno) ? "grande text-[22px] md:text-[28px]" : "text-[15px] opacity-45",
+          ]}
+        >
+          {anno}
+        </span>
+      </span>
+    ))
+  }
+  {
+    barre.map((b) => (
+      <span
+        aria-hidden="true"
+        class:list={["barra rounded-full bg-current", b.binario ? "opacity-45" : "opacity-90"]}
+        style={`grid-row:${riga(b.a)}/${riga(b.da) + 1};grid-column:${b.binario + 2}`}
+      />
+    ))
+  }
+  {
+    anni.map((anno) => (
+      finisconoNel(anno).length > 0 && (
+        <ul class="col-start-[-2] flex min-w-0 flex-col gap-3" style={`grid-row:${riga(anno)}`} aria-label={String(anno)}>
+            {finisconoNel(anno).map((v) => (
+              <li class="flex flex-col gap-3 rounded-(--card-radius) bg-current/7 p-4 md:p-5">
+                <div class="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
+                  <h4 class="flex items-start gap-2 font-display text-[17px] leading-[22px] font-bold tracking-[-0.3px]">
+                    {v.piattaforme && (
+                      <span class="flex shrink-0 gap-1 pt-[3px]">
+                        {v.piattaforme.map((pi) => (
+                          <Icon name={pi === "web" ? "ph:desktop" : "ph:device-mobile"} aria-label={pi === "web" ? "Web" : "Mobile"} role="img" class="size-4" />
+                        ))}
+                      </span>
+                    )}
+                    {v.nome}
+                  </h4>
+                  {v.contesto && (
+                    <span class="text-caption max-w-full rounded-full bg-current/10 px-2.5 py-1 font-semibold sm:shrink-0 sm:whitespace-nowrap">{v.contesto}</span>
+                  )}
+                </div>
+                {periodo(v) ? (
+                  <span class="text-caption self-start rounded-full bg-current/10 px-2.5 py-1 font-semibold">{periodo(v)}</span>
+                ) : (
+                  <span class="sr-only">{v.da}</span>
+                )}
+                {v.mese && <span class="text-caption -mt-1 opacity-80">{v.mese} {v.da}</span>}
+                {v.testo && <p class="text-[14px] leading-5 opacity-90">{v.testo}</p>}
+                {v.stack && (
+                  <ul class="flex flex-wrap gap-1.5" aria-label="Tecnologie">
+                    {v.stack.split(" · ").map((t) => (
+                      <li class="text-caption rounded-lg border border-current/25 px-2 py-0.5 font-semibold">{t}</li>
+                    ))}
+                  </ul>
+                )}
+                {v.link && (
+                  <ul class="flex flex-wrap gap-x-4 gap-y-1 border-t border-current/15 pt-3">
+                    {v.link.map((l) => (
+                      <li>
+                        <a
+                          href={l.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="text-caption inline-flex min-h-6 items-center gap-1 font-semibold underline-offset-2 hover:underline"
+                        >
+                          {l.nome}
+                          <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-3.5" />
+                          <span class="sr-only">(si apre in una nuova scheda)</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+        </ul>
+      )
+    ))
+  }
+</div>
+
+<style>
+  /*
+   * Allineamenti: anno, barra e titolo della prima card dell'anno partono dallo stesso punto (padding della card).
+   * L'anno usa l'interlinea del titolo (22px) e risale perché la sua linea di base cada su quella del titolo:
+   * con Poppins la base sta a interlinea/2 + 0.35em, quindi lo scarto è 0.35 × (corpo anno − 17px).
+   * È sticky: resta in cima alla finestra mentre si scorrono le card del suo anno.
+   */
+  .timeline {
+    --pad: 16px;
+    --corpo: 22;
+  }
+  .anno {
+    position: sticky;
+    top: 0;
+    line-height: 22px;
+    padding-top: var(--pad);
+    margin-top: calc(-0.35px * (var(--corpo) - 17));
+    white-space: nowrap;
+  }
+  .anno:not(.grande) {
+    --corpo: 17;
+  }
+  .barra {
+    margin-block: var(--pad);
+  }
+  @media (min-width: 768px) {
+    .timeline {
+      --pad: 20px;
+      --corpo: 28;
+    }
+  }
+</style>

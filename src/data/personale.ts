@@ -23,54 +23,119 @@ import minutesToMidnight from "../assets/extra/minutes-to-midnight.jpg";
 import goodbyeLullaby from "../assets/extra/goodbye-lullaby.jpg";
 
 
-export type Progetto = { nome: string; contesto?: string; testo: string; stack?: string };
-export type Voce = { quando?: string; cosa: string; dove?: string; testo?: string; progetti?: Progetto[] };
-export type Certificazione = { nome: string; ente: string; mese: string };
+export type Collegamento = { nome: string; href: string };
+export type Piattaforma = "web" | "mobile";
+/** Voce di una timeline di Carriera. da/a: anni di inizio e fine; senza "a" dura un anno. */
+export type VoceTimeline = {
+  da: number;
+  a?: number;
+  mese?: string;
+  nome: string;
+  contesto?: string;
+  piattaforme?: Piattaforma[];
+  testo?: string;
+  stack?: string;
+  link?: Collegamento[];
+};
+/** icona: nome Phosphor (es. "ph:barbell"). */
+export type Voce = { cosa: string; icona: string };
 export type Titolo = { nome: string; autore: string; copertina: ImageMetadata };
-export type Sezione = { titolo: string; voci: Voce[]; certificazioni?: Record<string, Certificazione[]>; titoli?: Titolo[]; quadrate?: boolean };
+export type Sezione = { titolo: string; voci: Voce[]; timeline?: VoceTimeline[]; anniVuoti?: boolean; titoli?: Titolo[]; quadrate?: boolean };
 
 export const carriera: Sezione[] = [
   {
     titolo: "Lavoro",
-    voci: [
-      // shortcut: ruolo, date e progetti segnaposto finché Paolo non li fornisce; LinkedIn pubblico mostra solo l'azienda.
+    anniVuoti: true,
+    // shortcut: testi in bozza scritti dalle pagine pubbliche dei servizi; Paolo li rivede. Stack solo dove indicato da lui.
+    voci: [],
+    // Dal più recente: l'ordine dell'array è quello mostrato.
+    timeline: [
+      { da: 2026, nome: "Cruscotto del Giudice", contesto: "PA Governance", piattaforme: ["web"], testo: "Cruscotto per il lavoro quotidiano dei magistrati." },
       {
-        quando: "Anno — oggi",
-        cosa: "Ruolo",
-        dove: "IBM Client Innovation Center Italy",
-        progetti: [
-          { nome: "Nome progetto", contesto: "Settore o cliente", testo: "Cosa hai costruito e quale problema risolveva.", stack: "Stack" },
-          { nome: "Nome progetto", contesto: "Settore o cliente", testo: "Cosa hai costruito e quale problema risolveva.", stack: "Stack" },
+        da: 2025,
+        nome: "ANA · Anagrafe Nazionale Assistiti",
+        contesto: "PA Governance",
+        piattaforme: ["web"],
+        testo: "La base dati unica degli assistiti del Servizio Sanitario Nazionale: iscrizione, medico, esenzioni e libretto sanitario, per cittadini e operatori delle ASL.",
+        stack: "React",
+        link: [{ nome: "anagrafesanitaria.gov.it", href: "https://www.anagrafesanitaria.gov.it/" }],
+      },
+      {
+        da: 2024,
+        a: 2025,
+        nome: "OTELLO · Vat Refund",
+        contesto: "PA Governance",
+        piattaforme: ["web", "mobile"],
+        testo: "Il tax free digitale dell'Agenzia delle Dogane: chi vive fuori dall'UE vede le proprie fatture, chiede il visto doganale e lo ottiene all'uscita con un QR code.",
+        stack: "React · React Native",
+        link: [
+          { nome: "Web app", href: "https://vatrefund.adm.gov.it/" },
+          { nome: "App Store", href: "https://apps.apple.com/it/app/vat-refund/id6739423105" },
+          { nome: "Google Play", href: "https://play.google.com/store/apps/details?id=it.gov.adm.vatrefund" },
         ],
       },
+      {
+        da: 2023,
+        a: 2024,
+        nome: "Fascicolo Sanitario Elettronico · Monitoraggio",
+        contesto: "PA Governance",
+        piattaforme: ["web"],
+        testo: "Gli indicatori pubblici sull'uso del Fascicolo Sanitario Elettronico da parte di cittadini, medici e aziende sanitarie, regione per regione.",
+        link: [{ nome: "I numeri del Fascicolo", href: "https://monitopen.fse.salute.gov.it/usage" }],
+      },
+      {
+        da: 2021,
+        a: 2023,
+        nome: "Gioco Legale",
+        contesto: "PA Governance",
+        piattaforme: ["mobile"],
+        testo: "L'app dell'Agenzia delle Dogane e dei Monopoli contro il gioco illegale: verifica delle giocate, autoesclusione dal gioco a distanza, segnalazioni e Lotteria degli scontrini.",
+        link: [
+          { nome: "App Store", href: "https://apps.apple.com/it/app/gioco-legale/id1582792360" },
+          { nome: "Google Play", href: "https://play.google.com/store/apps/details?id=it.gov.agenziadoganemonopoli.giocosicuro" },
+        ],
+      },
+      {
+        da: 2021,
+        nome: "Tracciamento Tabacchi",
+        contesto: "PA Governance",
+        piattaforme: ["mobile"],
+        testo: "Il sistema europeo di tracciamento dei prodotti del tabacco: ogni confezione ha un identificativo univoco seguito lungo tutta la filiera, contro contrabbando e vendita illecita. App per uso interno, non pubblicata negli store.",
+        link: [{ nome: "Portale SETT", href: "https://www.adm.gov.it/portale/portale-sett" }],
+      },
+      {
+        da: 2020,
+        nome: "Carige Mobile",
+        contesto: "BMT Bank",
+        piattaforme: ["mobile"],
+        testo: "L'app di Banca Carige per conti, carte, bonifici, pagamenti e trading dallo smartphone.",
+        stack: "Ionic · Angular",
+      },
+      { da: 2020, nome: "Dashboard web", contesto: "BMT Bank", piattaforme: ["web"], testo: "Dashboard web per Banca Carige.", stack: "Angular" },
     ],
   },
   {
     titolo: "Studio",
-    voci: [
-      { quando: "2020", cosa: "Links Academy Java-Spring-Angular", dove: "Links Management and Technology", testo: "Corso in presenza." },
-      { quando: "2016 — 2021", cosa: "Università degli Studi di Bari" },
+    voci: [],
+    timeline: [
+      { da: 2020, nome: "Links Academy Java-Spring-Angular", contesto: "Links Management and Technology", testo: "Corso in presenza." },
+      { da: 2016, a: 2021, nome: "Università degli Studi di Bari" },
     ],
   },
   {
     titolo: "Certificazioni",
     voci: [],
-    // Raggruppate per anno, dal più recente; l'ordine delle chiavi è quello di inserimento.
-    certificazioni: {
-      "2026": [
-        { nome: "Claude Certified Associate — Foundations", ente: "Anthropic", mese: "ago" },
-        { nome: "Generative & Agentic AI Foundation", ente: "IBM", mese: "lug" },
-        { nome: "Government Insights and Solutions (Bronze)", ente: "IBM", mese: "mar" },
-      ],
-      "2025": [
-        { nome: "Azure Fundamentals", ente: "Microsoft", mese: "ott" },
-        { nome: "Government Industry Jumpstart", ente: "IBM", mese: "feb" },
-      ],
-      "2024": [{ nome: "watsonx.ai Technical Essentials", ente: "IBM", mese: "nov" }],
-      "2022": [{ nome: "Membership Certificate", ente: "Interaction Design Foundation", mese: "gen" }],
-      "2021": [{ nome: "iOS Design Essentials", ente: "Apple", mese: "set" }],
-      "2020": [{ nome: "Enterprise Design Thinking Practitioner", ente: "IBM", mese: "dic" }],
-    },
+    timeline: [
+      { da: 2026, mese: "ago", nome: "Claude Certified Associate — Foundations", contesto: "Anthropic" },
+      { da: 2026, mese: "lug", nome: "Generative & Agentic AI Foundation", contesto: "IBM" },
+      { da: 2026, mese: "mar", nome: "Government Insights and Solutions (Bronze)", contesto: "IBM" },
+      { da: 2025, mese: "ott", nome: "Azure Fundamentals", contesto: "Microsoft" },
+      { da: 2025, mese: "feb", nome: "Government Industry Jumpstart", contesto: "IBM" },
+      { da: 2024, mese: "nov", nome: "watsonx.ai Technical Essentials", contesto: "IBM" },
+      { da: 2022, mese: "gen", nome: "Membership Certificate", contesto: "Interaction Design Foundation" },
+      { da: 2021, mese: "set", nome: "iOS Design Essentials", contesto: "Apple" },
+      { da: 2020, mese: "dic", nome: "Enterprise Design Thinking Practitioner", contesto: "IBM" },
+    ],
   },
 ];
 
@@ -117,6 +182,11 @@ export const extra: Sezione[] = [
   },
   {
     titolo: "Altri interessi",
-    voci: [{ cosa: "Design" }, { cosa: "Domotica" }],
+    voci: [
+      { cosa: "Design", icona: "ph:pen-nib" },
+      { cosa: "Domotica", icona: "ph:house-line" },
+      { cosa: "Nutrizione", icona: "ph:carrot" },
+      { cosa: "Palestra", icona: "ph:barbell" },
+    ],
   },
 ];

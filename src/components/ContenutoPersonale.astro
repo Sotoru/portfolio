@@ -1,6 +1,8 @@
 ---
+import { Icon } from "astro-icon/components";
 import type { Sezione } from "../data/personale";
 import Carosello from "./Carosello.astro";
+import Timeline from "./Timeline.astro";
 
 interface Props {
   sezioni: Sezione[];
@@ -9,59 +11,44 @@ const { sezioni } = Astro.props;
 ---
 
 {
-  sezioni.map((sezione) => sezione.titoli ? (
-    <Carosello titolo={sezione.titolo} titoli={sezione.titoli} quadrate={sezione.quadrate} />
-  ) : (
-    <section class="flex flex-col gap-2">
-      {sezioni.length > 1 && <h3 class="text-eyebrow opacity-80">{sezione.titolo}</h3>}
-      {sezione.voci.length > 0 && <ol class="flex flex-col">
-        {sezione.voci.map((voce) => (
-          <li class:list={["grid gap-1 border-t py-5", voce.quando && "md:grid-cols-[140px_1fr] md:gap-6", "border-current/15"]}>
-            {voce.quando && <span class="text-caption pt-0.5 opacity-80">{voce.quando}</span>}
-            <div class="flex flex-col gap-1">
-              <p class="text-ui">
-                {voce.cosa}
-                {voce.dove && <span class="font-normal opacity-80"> · {voce.dove}</span>}
-              </p>
-              {voce.testo && <p class="text-[14px] leading-5 opacity-85">{voce.testo}</p>}
-              {voce.progetti && (
-                <ul class="mt-3 flex flex-col gap-3">
-                  {voce.progetti.map((pr) => (
-                    <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", "bg-current/7"]}>
-                      <p class="text-ui">
-                        {pr.nome}
-                        {pr.contesto && <span class="font-normal opacity-80"> · {pr.contesto}</span>}
-                      </p>
-                      <p class="text-[14px] leading-5 opacity-85">{pr.testo}</p>
-                      {pr.stack && <p class="text-caption mt-1 font-semibold opacity-80">{pr.stack}</p>}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </li>
-        ))}
-      </ol>}
-      {sezione.certificazioni && (
-        <div class="flex flex-col">
-          {Object.entries(sezione.certificazioni)
-            .sort(([a], [b]) => Number(b) - Number(a))
-            .map(([anno, lista]) => (
-              <div class:list={["grid gap-3 border-t py-5 md:grid-cols-[140px_1fr] md:gap-6", "border-current/15"]}>
-                <p class="font-display text-[24px] leading-7 font-bold tracking-[-0.5px]">{anno}</p>
-                <ul class="grid gap-2 sm:grid-cols-2">
-                  {lista.map((c) => (
-                    <li class:list={["flex flex-col gap-1 rounded-(--card-radius) p-4", "bg-current/7"]}>
-                      <span class="text-caption font-semibold tracking-[0.4px] uppercase opacity-80">{c.ente}</span>
-                      <span class="text-ui">{c.nome}</span>
-                      <span class="text-caption opacity-80">{c.mese} {anno}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+  sezioni.map((sezione) =>
+    sezione.titoli ? (
+      <Carosello titolo={sezione.titolo} titoli={sezione.titoli} quadrate={sezione.quadrate} />
+    ) : (
+      <section class="flex flex-col gap-4">
+        {sezioni.length > 1 && <h3 class="text-eyebrow border-b border-current/15 pb-3 opacity-80">{sezione.titolo}</h3>}
+        {sezione.timeline && <Timeline voci={sezione.timeline} anniVuoti={sezione.anniVuoti} />}
+        {sezione.voci.length > 0 && (
+          <ul class="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {sezione.voci.map((voce) => (
+              <li class="voce flex flex-col gap-3 rounded-(--card-radius) bg-current/7 p-4">
+                <span class="flex size-11 items-center justify-center rounded-2xl bg-current/10">
+                  <Icon name={voce.icona} aria-hidden="true" class="icona size-6" />
+                </span>
+                <span class="text-ui">{voce.cosa}</span>
+              </li>
             ))}
-        </div>
-      )}
-    </section>
-  ))
+          </ul>
+        )}
+      </section>
+    ),
+  )
 }
+
+<style>
+  /* Al passaggio l'icona si inclina appena, con la molla del sito; ferma se il movimento è ridotto. */
+  .icona {
+    transition: rotate var(--molla), scale var(--molla);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .voce:hover .icona {
+      rotate: -8deg;
+      scale: 1.08;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .icona {
+      transition: none;
+    }
+  }
+</style>
