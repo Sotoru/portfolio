@@ -24,7 +24,7 @@ const { data } = progetto;
     <h3 class="text-h3">{data.tipografia.font}</h3>
     <p class="text-caption text-muted">{data.tipografia.nota}</p>
     {pubblico && (
-      <a href={storyUrl(data.storybook, data.tipografia.story)} class="text-ui inline-flex items-center gap-1 self-start text-on-secondary hover:underline">
+      <a href={storyUrl(data.storybook, data.tipografia.story)} class="text-ui inline-flex min-h-6 items-center gap-1 self-start text-on-secondary hover:underline">
         Tipografia in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
       </a>
     )}
@@ -40,7 +40,7 @@ const { data } = progetto;
     <h3 class="text-h3">{data.palette.nome}</h3>
     <p class="text-caption text-muted">{data.palette.nota}</p>
     {pubblico && (
-      <a href={storyUrl(data.storybook, data.palette.story)} class="text-ui inline-flex items-center gap-1 self-start text-on-secondary hover:underline">
+      <a href={storyUrl(data.storybook, data.palette.story)} class="text-ui inline-flex min-h-6 items-center gap-1 self-start text-on-secondary hover:underline">
         Colori in Storybook <Icon name="ph:arrow-up-right" aria-hidden="true" class="size-4" />
       </a>
     )}

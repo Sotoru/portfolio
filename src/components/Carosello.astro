@@ -1,0 +1,121 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import type { Titolo } from "../data/personale";
+
+interface Props {
+  titolo: string;
+  titoli: Titolo[];
+  quadrate?: boolean;
+}
+const { titolo, titoli, quadrate } = Astro.props;
+// Tre copie: si parte da quella centrale e, a fine scorrimento, si salta di una copia. Il salto non si vede perché le copie sono identiche.
+const copie = [0, 1, 2];
+---
+
+<section class="carosello flex flex-col gap-2" aria-roledescription="carosello" aria-label={titolo}>
+  <div class="flex items-center justify-between gap-4">
+    <h3 class="text-eyebrow opacity-70">{titolo}</h3>
+    <div class="flex gap-1.5">
+      <button type="button" data-passo="-1" aria-label={`${titolo}: precedenti`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
+        <Icon name="ph:caret-left" aria-hidden="true" class="size-4" />
+      </button>
+      <button type="button" data-passo="1" aria-label={`${titolo}: successivi`} class="flex size-8 items-center justify-center rounded-full bg-current/10 hover:bg-current/15">
+        <Icon name="ph:caret-right" aria-hidden="true" class="size-4" />
+      </button>
+    </div>
+  </div>
+  <ul tabindex="0" aria-label={`${titolo}: titoli`} class="riga no-scrollbar rounded-2xl focus-visible:outline-offset-[-3px] -mx-(--card-pad) flex snap-x snap-mandatory scroll-px-(--card-pad) gap-4 overflow-x-auto overscroll-x-contain px-(--card-pad) pt-2 pb-4 md:-mx-12 md:scroll-px-12 md:px-12">
+    {
+      copie.map((copia) =>
+        titoli.map((t) => (
+          <li
+            class:list={["carta flex shrink-0 snap-start flex-col gap-2", quadrate ? "w-[225px] md:w-[270px]" : "w-[150px] md:w-[180px]"]}
+            aria-hidden={copia === 1 ? undefined : "true"}
+            inert={copia !== 1}
+          >
+            <Image
+              src={t.copertina}
+              alt={copia === 1 ? `Copertina di ${t.nome}` : ""}
+              widths={[270, 540]}
+              sizes="270px"
+              class="attenua h-[225px] w-full rounded-2xl bg-current/7 object-cover md:h-[270px]"
+            />
+            <span class="line-clamp-2 text-[14px] leading-5 font-semibold">{t.nome}</span>
+            <span class="text-caption -mt-1 opacity-70">{t.autore}</span>
+          </li>
+        )),
+      )
+    }
+  </ul>
+</section>
+
+<style>
+  /* Profondità: le copertine vicino ai bordi della riga si rimpiccioliscono e sfumano, legate allo scorrimento orizzontale. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .carta {
+        animation: bordo linear both;
+      }
+      /* Regola a parte: il minificatore fonderebbe animation-timeline nella scorciatoia, che lo azzera. */
+      .riga .carta {
+        animation-timeline: view(inline);
+      }
+      @keyframes bordo {
+        0%,
+        100% {
+          scale: 0.86;
+          opacity: 0.45;
+        }
+        22%,
+        78% {
+          scale: 1;
+          opacity: 1;
+        }
+      }
+    }
+  }
+</style>
+
+<script>
+  const animabile = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+
+  for (const carosello of document.querySelectorAll<HTMLElement>(".carosello")) {
+    const riga = carosello.querySelector<HTMLElement>(".riga")!;
+    const carte = [...riga.children] as HTMLElement[];
+    const n = carte.length / 3;
+    const copia = () => carte[n].offsetLeft - carte[0].offsetLeft;
+    const passo = () => carte[1].offsetLeft - carte[0].offsetLeft;
+
+    // Tiene lo scorrimento dentro la copia centrale: fuori di lì salta di una copia intera.
+    const riporta = () => {
+      const c = copia();
+      if (!c) return;
+      if (riga.scrollLeft < c * 0.5) riga.scrollLeft += c;
+      else if (riga.scrollLeft > c * 1.5) riga.scrollLeft -= c;
+    };
+    // La finestra è chiusa al caricamento: la riga si posiziona sulla copia centrale quando prende una larghezza.
+    let pronta = false;
+    new ResizeObserver(() => {
+      if (pronta || !riga.clientWidth) return;
+      pronta = true;
+      riga.scrollLeft = copia();
+    }).observe(riga);
+
+    if ("onscrollend" in window) riga.addEventListener("scrollend", riporta);
+    else {
+      // shortcut: Safari senza scrollend usa una pausa di 150 ms; si toglie quando scrollend è ovunque.
+      let attesa = 0;
+      riga.addEventListener("scroll", () => {
+        clearTimeout(attesa);
+        attesa = window.setTimeout(riporta, 150);
+      }, { passive: true });
+    }
+
+    for (const b of carosello.querySelectorAll<HTMLButtonElement>("[data-passo]"))
+      b.addEventListener("click", () => {
+        riporta();
+        riga.scrollBy({ left: Number(b.dataset.passo) * passo() * 2, behavior: animabile ? "smooth" : "instant" });
+      });
+  }
+</script>
