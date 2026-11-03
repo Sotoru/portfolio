@@ -27,7 +27,7 @@
       "textMuted": "#9AA0A6",
       "canvas": "#121316",
       "accento": "#5AA2FF",
-      "attivo": "#E6E7E9",
+      "attivo": "#FFFFFF",
       "onAttivo": "#1A1C20"
     },
     "home": { "messaggio": "Spazio\nalle idee.", "prodotto": "PedagogicPoint" },
@@ -38,14 +38,14 @@
       "stack": "Next.js · React · TypeScript · Panda CSS"
     },
     "interfaccia": {
-      "desktop": { "immagine": "../assets/progetti/pedagogicpoint/articolo-desktop.png", "didascalia": "Articolo / Desktop" },
-      "mobile": { "immagine": "../assets/progetti/pedagogicpoint/home-mobile.png", "didascalia": "Home / Mobile" }
+      "desktop": { "immagine": "../assets/progetti/pedagogicpoint/home-desktop.png", "didascalia": "Home / Desktop", "story": "schermate-home--default" },
+      "mobile": { "immagine": "../assets/progetti/pedagogicpoint/articolo-mobile.png", "didascalia": "Articolo / Mobile", "story": "schermate-articolo--default" }
     },
     "tipografia": { "font": "Montserrat + Inter", "nota": "Great Vibes + Montez per il wordmark.", "story": "fondamenti-tipografia--light", "campione": "../assets/progetti/pedagogicpoint/aa.svg" },
     "palette": { "nome": "Neutri editoriali", "nota": "Primary #141414 · Accento #0059BB", "story": "fondamenti-colori--light" },
     "componenti": [
-      { "nome": "Perla Pedagogica", "story": "componenti-perla-pedagogica--breve", "altezza": 320 },
-      { "nome": "Scheda articolo", "story": "componenti-articoli-scheda-articolo--default", "altezza": 360 },
+      { "nome": "Perla Pedagogica", "story": "componenti-perla-pedagogica--breve", "altezza": 440 },
+      { "nome": "Scheda articolo", "story": "componenti-articoli-scheda-articolo--default", "altezza": 620 },
       { "nome": "Pulsante", "story": "ui-pulsante--outline", "altezza": 200 },
       { "nome": "Filtro categoria", "story": "ui-filtro-categoria--tutte", "altezza": 360 },
       { "nome": "Selettore tema", "story": "ui-selettore-tema--default", "altezza": 200 },

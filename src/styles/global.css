@@ -53,8 +53,8 @@
   --frame-radius: clamp(24px, 22.514px + 0.381vw, 28px);
   --inner-x: clamp(24px, 15.086px + 2.2857vw, 48px);
   --section-y: clamp(32px, 26.057px + 1.5238vw, 48px);
-  --hero-y: clamp(48px, 42.057px + 1.5238vw, 64px);
-  --hero-h: clamp(400px, 370.286px + 7.619vw, 480px);
+  --hero-y: clamp(32px, 26.057px + 1.5238vw, 48px);
+  --hero-h: clamp(280px, 250.286px + 7.619vw, 360px);
   --display: clamp(72px, 51.2px + 5.3333vw, 128px);
   --display-box: clamp(80px, 59.2px + 5.3333vw, 136px);
   --h2: clamp(28px, 23.543px + 1.1429vw, 40px);

@@ -3,13 +3,20 @@ import { Icon } from "astro-icon/components";
 
 const scelte = [
   { valore: "chiaro", nome: "Tema chiaro", icona: "ph:sun" },
-  { valore: "sistema", nome: "Tema di sistema", icona: "ph:circle-half" },
+  { valore: "sistema", nome: "Tema di sistema", icona: "ph:monitor" },
   { valore: "scuro", nome: "Tema scuro", icona: "ph:moon" },
 ];
 ---
 
-<div role="radiogroup" aria-label="Tema" class="selettore-tema relative flex h-10 shrink-0 items-center gap-1 rounded-3xl bg-brand-surface p-1 text-brand-ink sm:h-12">
-  <span class="pallino" aria-hidden="true"></span>
+<!--
+  A riposo mostra solo il tema attivo; al clic si apre con le tre scelte e si richiude dopo la scelta,
+  con Esc o uscendo dal gruppo. Resta un radiogroup: le frecce lo aprono e cambiano tema come i radio nativi.
+-->
+<div
+  role="radiogroup"
+  aria-label="Tema"
+  class="selettore-tema flex shrink-0 items-center rounded-full border border-brand-surface p-0.5 text-brand-ink"
+>
   {
     scelte.map((s) => (
       <button
@@ -19,36 +26,30 @@ const scelte = [
         aria-checked={s.valore === "sistema" ? "true" : "false"}
         aria-label={s.nome}
         title={s.nome}
-        class="relative z-10 flex size-8 items-center justify-center rounded-full opacity-70 transition-[opacity,color] duration-200 hover:opacity-100 aria-checked:text-on-brand aria-checked:opacity-100 sm:size-10"
+        class="voce flex size-8 items-center justify-center overflow-hidden rounded-full text-brand-ink/60 hover:text-brand-ink aria-checked:bg-brand-surface aria-checked:text-brand-ink"
       >
-        <Icon name={s.icona} aria-hidden="true" class="size-5" />
+        <Icon name={s.icona} aria-hidden="true" class="size-[18px] shrink-0" />
       </button>
     ))
   }
 </div>
 
 <style>
-  /* Pallino che scivola sotto la scelta attiva, con la stessa molla del resto del sito. */
-  /* Pallino nel blu del brand: si vede uguale in chiaro e in scuro. */
-  .pallino {
-    --lato: 32px;
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    width: var(--lato);
-    height: var(--lato);
-    border-radius: 9999px;
-    background: var(--color-brand);
-    translate: calc(var(--i, 1) * (var(--lato) + 4px)) 0;
-    transition: translate var(--molla);
+  .voce {
+    transition:
+      width var(--molla),
+      opacity 200ms ease-out,
+      visibility 200ms,
+      background-color 200ms ease-out,
+      color 200ms ease-out;
   }
-  @media (min-width: 640px) {
-    .pallino {
-      --lato: 40px;
-    }
+  .selettore-tema:not([data-aperto]) .voce:not([aria-checked="true"]) {
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
   }
   @media (prefers-reduced-motion: reduce) {
-    .pallino {
+    .voce {
       transition: none;
     }
   }
@@ -59,12 +60,12 @@ const scelte = [
   const voci = [...gruppo.querySelectorAll<HTMLButtonElement>("[role=radio]")];
   const radice = document.documentElement;
 
+  const apri = (aperto: boolean) => gruppo.toggleAttribute("data-aperto", aperto);
   const mostra = (tema: string) => {
-    voci.forEach((v, i) => {
+    voci.forEach((v) => {
       const attiva = v.dataset.tema === tema;
       v.setAttribute("aria-checked", String(attiva));
       v.tabIndex = attiva ? 0 : -1;
-      if (attiva) gruppo.style.setProperty("--i", String(i));
     });
   };
   const applica = (tema: string) => {
@@ -80,15 +81,26 @@ const scelte = [
 
   mostra(radice.dataset.tema ?? "sistema");
   voci.forEach((v, i) => {
-    v.addEventListener("click", () => applica(v.dataset.tema!));
-    // Radiogroup: le frecce spostano e selezionano, come i radio nativi.
+    v.addEventListener("click", () => {
+      if (!gruppo.hasAttribute("data-aperto")) return apri(true);
+      applica(v.dataset.tema!);
+      apri(false);
+    });
     v.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") return apri(false);
       const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
       if (passo === undefined) return;
       e.preventDefault();
+      apri(true);
       const prossima = voci[(i + passo + voci.length) % voci.length];
       applica(prossima.dataset.tema!);
       prossima.focus();
     });
+  });
+  gruppo.addEventListener("focusout", (e) => {
+    if (!gruppo.contains(e.relatedTarget as Node | null)) apri(false);
+  });
+  document.addEventListener("pointerdown", (e) => {
+    if (!gruppo.contains(e.target as Node)) apri(false);
   });
 </script>
