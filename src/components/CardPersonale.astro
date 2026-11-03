@@ -41,10 +41,9 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
   <dialog id={`dialogo-${tipo}`} aria-labelledby={`dialogo-${tipo}-titolo`} class:list={["dialogo", colori]}>
     <div class="maniglia" aria-hidden="true"></div>
     <div class="flex flex-col gap-8 p-(--card-pad) md:p-12">
-      <div class="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1">
-        <p class="text-eyebrow col-span-2">{sopra}</p>
-        <h2 id={`dialogo-${tipo}-titolo`} class="text-h2">{titolo}</h2>
-        <form method="dialog">
+      <div class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1">
+        <p class="text-eyebrow">{sopra}</p>
+        <form method="dialog" class="col-start-2 row-span-2 row-start-1">
           <button
             class="flex size-12 items-center justify-center rounded-2xl bg-current/10 hover:bg-current/15"
             aria-label="Chiudi"
@@ -52,6 +51,7 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
             <Icon name="ph:x" aria-hidden="true" class="size-5" />
           </button>
         </form>
+        <h2 id={`dialogo-${tipo}-titolo`} class="text-h2">{titolo}</h2>
       </div>
       <ContenutoPersonale sezioni={sezioni} />
     </div>
@@ -155,11 +155,15 @@ const colori = carriera ? "bg-brand-surface text-brand-ink" : "bg-brand-deep tex
         translate: 0 100%;
       }
     }
+    /* Sopra il contenuto, non nel flusso: così la X dista dal bordo del foglio quanto il padding. */
     .maniglia {
       display: block;
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      translate: -50% 0;
       width: 40px;
       height: 5px;
-      margin: 10px auto 0;
       border-radius: 3px;
       background: currentColor;
       opacity: 0.25;
