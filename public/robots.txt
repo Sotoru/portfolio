@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /offline/
+Disallow: /en/offline/
+Disallow: /es/offline/
+Disallow: /fr/offline/
+Disallow: /de/offline/

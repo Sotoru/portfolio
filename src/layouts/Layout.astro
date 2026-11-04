@@ -9,10 +9,12 @@ interface Props {
   description: string;
   /** Resto del percorso della pagina, uguale in tutte le lingue (es. "pedagogicpoint/"). */
   pagina?: string;
+  /** Pagina da non indicizzare (es. offline). */
+  noindex?: boolean;
   /** Variabili di tema della pagina (es. il progetto): applicate a <body>, così anche footer e bordi le ereditano. */
   fondo?: string;
 }
-const { title, description, fondo, pagina = "" } = Astro.props;
+const { title, description, fondo, pagina = "", noindex = false } = Astro.props;
 const { l } = i18n(Astro.params);
 // I social vogliono un URL assoluto: serve `site` in astro.config, altrimenti resta relativo.
 const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
@@ -52,11 +54,14 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     {lingue.map((x) => <link rel="alternate" hreflang={x} href={indirizzo(x, pagina)} />)}
     <link rel="alternate" hreflang="x-default" href={indirizzo("it", pagina)} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href={indirizzo(l, "manifest.webmanifest")} />
+    <meta name="apple-mobile-web-app-title" content="Portfolio" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -79,6 +84,8 @@ const og = Astro.site ? new URL("/og.png", Astro.site).href : "/og.png";
     <Footer pagina={pagina} />
     <script>
       import "../scripts/reveal";
+      // Service worker solo in produzione: in sviluppo la cache nasconderebbe le modifiche.
+      if ("serviceWorker" in navigator && import.meta.env.PROD) navigator.serviceWorker.register("/sw.js");
     </script>
   </body>
 </html>

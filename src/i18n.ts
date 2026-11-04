@@ -12,6 +12,17 @@ export const tr = (t: Testo, l: Lingua) => (typeof t === "string" ? t : t[l]);
 export const indirizzo = (l: Lingua, pagina = "") => (l === "it" ? "/" : `/${l}/`) + pagina;
 
 const ui = {
+  appBreve: { it: "Portfolio", en: "Portfolio", es: "Portafolio", fr: "Portfolio", de: "Portfolio" },
+  offlineTitolo: { it: "Sei offline", en: "You’re offline", es: "Estás sin conexión", fr: "Vous êtes hors ligne", de: "Du bist offline" },
+  offlineTesto: {
+    it: "Questa pagina non è ancora salvata sul dispositivo. Le pagine già visitate restano disponibili anche senza connessione.",
+    en: "This page isn’t saved on your device yet. Pages you’ve already visited stay available without a connection.",
+    es: "Esta página aún no está guardada en tu dispositivo. Las páginas que ya visitaste siguen disponibles sin conexión.",
+    fr: "Cette page n’est pas encore enregistrée sur votre appareil. Les pages déjà visitées restent disponibles hors ligne.",
+    de: "Diese Seite ist noch nicht auf deinem Gerät gespeichert. Bereits besuchte Seiten bleiben auch ohne Verbindung verfügbar.",
+  },
+  riprova: { it: "Riprova", en: "Try again", es: "Reintentar", fr: "Réessayer", de: "Erneut versuchen" },
+  tornaHome: { it: "Torna alla home", en: "Back to home", es: "Volver al inicio", fr: "Retour à l’accueil", de: "Zur Startseite" },
   homeTitolo: { it: "Paolo Laddomada · Portfolio", en: "Paolo Laddomada · Portfolio", es: "Paolo Laddomada · Portafolio", fr: "Paolo Laddomada · Portfolio", de: "Paolo Laddomada · Portfolio" },
   homeDescrizione: {
     it: "Portfolio di Paolo Laddomada, Front End Developer.",
